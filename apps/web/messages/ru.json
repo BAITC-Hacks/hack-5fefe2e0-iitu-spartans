@@ -121,5 +121,30 @@
   "stats.action.run": "запуск",
   "stats.action.clarify": "уточнение",
   "stats.action.handoff": "оператор",
-  "stats.action.continue": "продолжение"
+  "stats.action.continue": "продолжение",
+
+  "compare.open": "Сравнить ChatGPT и Gemini",
+  "compare.title": "Сравнение движков выбора сценария",
+  "compare.utterance": "Реплика",
+  "compare.loading": "Оба движка выбирают сценарий…",
+  "compare.agree": "Основной сценарий совпал",
+  "compare.disagree": "Движки разошлись",
+  "compare.noVerdict": "Сравнивать нечего: ответил один движок или ни одного",
+  "compare.unavailable": "Ключ не задан: {env}",
+  "compare.noDecision": "Решения нет",
+  "compare.ms": "мс",
+  "compare.attempts": "попыток: {n}",
+  "compare.rerun": "Повторить",
+  "compare.close": "Закрыть",
+  "compare.error": "Сравнение не удалось",
+  "compare.hint": "Сравнение — инструмент супервизора: оно не меняет ход диалога и не пишется в журнал.",
+  "engine.openai": "ChatGPT · OpenAI",
+  "engine.gemini": "Gemini · Google",
+
+  "settings.open": "Настройки",
+  "settings.title": "Настройки разговора",
+  "settings.voice": "Голос",
+  "settings.engines": "Движки выбора сценария",
+  "settings.ready": "настроен",
+  "mic.hint": "Нажмите и говорите на русском или казахском; язык и озвучивание — в настройках."
 }

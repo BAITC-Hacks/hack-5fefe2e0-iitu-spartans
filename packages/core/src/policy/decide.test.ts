@@ -73,7 +73,32 @@ describe("decide — политика принятия решений", () => {
   it("продолжение активного сценария не запускает маршрутизацию заново", () => {
     const state = { ...INITIAL_POLICY_STATE, activeScenario: "SC02" };
     const { action } = decide(decision([["SC01", 0.9]], { is_continuation: true }), state, priorityOf);
-    expect(action).toEqual({ kind: "continue", scenarioId: "SC02" });
+    expect(action).toEqual({ kind: "continue", scenarioId: "SC02", filled: [] });
+  });
+
+  it("продолжение с названными параметрами передаёт их имена в действие", () => {
+    const state = { ...INITIAL_POLICY_STATE, activeScenario: "SC17" };
+    const { action } = decide(decision([["SC17", 0.8]], { is_continuation: true, slots: { claim_number: "12345" } }), state, priorityOf);
+    expect(action).toEqual({ kind: "continue", scenarioId: "SC17", filled: ["claim_number"] });
+  });
+
+  it("непонятная реплика с is_continuation не «продолжает» тему: клиент получает вопрос, тема сохраняется", () => {
+    // Живой прогон 23.09: «По страховке.» после SC17 давало continue и глухое «Спасибо, продолжаем».
+    const state = { lowConfidenceStreak: 0, activeScenario: "SC17" };
+    const { action, nextState } = decide(decision([["SYS_UNCLEAR", 0.99]], { is_continuation: true }), state, priorityOf);
+    expect(action).toEqual({ kind: "run", queue: ["SYS_UNCLEAR"] });
+    expect(nextState).toEqual({ lowConfidenceStreak: 0, activeScenario: "SC17" });
+  });
+
+  it("прощание завершает разговор, а системное намерение не становится активным сценарием", () => {
+    const state = { lowConfidenceStreak: 0, activeScenario: "SC17" };
+    expect(decide(decision([["SYS_GOODBYE", 0.95]]), state, priorityOf).nextState).toEqual(INITIAL_POLICY_STATE);
+    expect(decide(decision([["SYS_OUT_OF_SCOPE", 0.95]]), state, priorityOf).nextState.activeScenario).toBe("SC17");
+  });
+
+  it("варианты уточняющего вопроса не содержат системных намерений", () => {
+    const { action } = decide(decision([["SYS_UNCLEAR", 0.6], ["SC17", 0.5]]), INITIAL_POLICY_STATE, priorityOf);
+    expect(action).toEqual({ kind: "clarify", options: ["SC17"] });
   });
 
   it("запуск сценария сбрасывает счётчик низкой уверенности и запоминает активный сценарий", () => {

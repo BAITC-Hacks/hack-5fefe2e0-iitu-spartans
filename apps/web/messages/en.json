@@ -121,5 +121,30 @@
   "stats.action.run": "run",
   "stats.action.clarify": "clarify",
   "stats.action.handoff": "operator",
-  "stats.action.continue": "continue"
+  "stats.action.continue": "continue",
+
+  "compare.open": "Compare ChatGPT and Gemini",
+  "compare.title": "Scenario engine comparison",
+  "compare.utterance": "Utterance",
+  "compare.loading": "Both engines are choosing a scenario…",
+  "compare.agree": "Primary scenario matches",
+  "compare.disagree": "Engines disagree",
+  "compare.noVerdict": "Nothing to compare: one engine answered, or none",
+  "compare.unavailable": "Key not set: {env}",
+  "compare.noDecision": "No decision",
+  "compare.ms": "ms",
+  "compare.attempts": "attempts: {n}",
+  "compare.rerun": "Run again",
+  "compare.close": "Close",
+  "compare.error": "Comparison failed",
+  "compare.hint": "Comparison is a supervisor tool: it does not change the dialog and is not journaled.",
+  "engine.openai": "ChatGPT · OpenAI",
+  "engine.gemini": "Gemini · Google",
+
+  "settings.open": "Settings",
+  "settings.title": "Conversation settings",
+  "settings.voice": "Voice",
+  "settings.engines": "Scenario engines",
+  "settings.ready": "configured",
+  "mic.hint": "Press and speak Russian or Kazakh; language and voice output are in settings."
 }

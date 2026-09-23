@@ -121,5 +121,30 @@
   "stats.action.run": "іске қосу",
   "stats.action.clarify": "нақтылау",
   "stats.action.handoff": "оператор",
-  "stats.action.continue": "жалғастыру"
+  "stats.action.continue": "жалғастыру",
+
+  "compare.open": "ChatGPT пен Gemini салыстыру",
+  "compare.title": "Сценарий таңдау қозғалтқыштарын салыстыру",
+  "compare.utterance": "Реплика",
+  "compare.loading": "Екі қозғалтқыш сценарий таңдауда…",
+  "compare.agree": "Негізгі сценарий сәйкес келді",
+  "compare.disagree": "Қозғалтқыштар алшақтады",
+  "compare.noVerdict": "Салыстыратын ештеңе жоқ: бір қозғалтқыш жауап берді немесе ешқайсысы",
+  "compare.unavailable": "Кілт берілмеген: {env}",
+  "compare.noDecision": "Шешім жоқ",
+  "compare.ms": "мс",
+  "compare.attempts": "әрекет: {n}",
+  "compare.rerun": "Қайталау",
+  "compare.close": "Жабу",
+  "compare.error": "Салыстыру сәтсіз аяқталды",
+  "compare.hint": "Салыстыру — супервизор құралы: ол диалог барысын өзгертпейді және журналға жазылмайды.",
+  "engine.openai": "ChatGPT · OpenAI",
+  "engine.gemini": "Gemini · Google",
+
+  "settings.open": "Баптаулар",
+  "settings.title": "Сөйлесу баптаулары",
+  "settings.voice": "Дауыс",
+  "settings.engines": "Сценарий таңдау қозғалтқыштары",
+  "settings.ready": "бапталған",
+  "mic.hint": "Басып, орысша немесе қазақша сөйлеңіз; тіл мен дыбыстау — баптауларда."
 }

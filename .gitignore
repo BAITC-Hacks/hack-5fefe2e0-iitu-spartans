@@ -37,3 +37,7 @@ Thumbs.db
 # Next.js генерирует при сборке
 next-env.d.ts
 *.tsbuildinfo
+
+# Next.js 16 генерирует эти файлы при next dev (agentRules); точка входа для агентов — AGENTS.md в корне
+apps/web/AGENTS.md
+apps/web/CLAUDE.md

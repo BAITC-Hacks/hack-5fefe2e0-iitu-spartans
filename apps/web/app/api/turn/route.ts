@@ -9,7 +9,7 @@ import {
   type TurnResponse,
   type TurnTrace,
 } from "@voice-router/core";
-import { loadCatalog } from "../../../lib/server/catalog";
+import { loadCatalog, scenarioDisplayName } from "../../../lib/server/catalog";
 import { completeWithOpenAI, routerProvider } from "../../../lib/server/completion";
 import { pool } from "../../../lib/server/db";
 import { recordTurn } from "../../../lib/server/journal";
@@ -110,12 +110,7 @@ export async function POST(request: Request): Promise<Response> {
   const responseMs = Date.now() - responseStarted;
 
   const named = [...effective.scenarios, ...effective.alternatives].map((s) => s.scenario_id);
-  // Для панели — название без кавычек и с заглавной буквы; кавычки нужны только внутри фразы робота.
-  const displayName = (id: string) => {
-    const name = labels.ru[id]?.replace(/^«|»$/g, "");
-    return name ? name.charAt(0).toUpperCase() + name.slice(1) : id;
-  };
-  const scenarioNames = Object.fromEntries(named.map((id) => [id, displayName(id)]));
+  const scenarioNames = Object.fromEntries(named.map((id) => [id, scenarioDisplayName(labels, id)]));
   const turn = (state.turnCount ?? Math.floor(state.history.length / 2)) + 1;
 
   const dialogId = state.dialogId ?? crypto.randomUUID();

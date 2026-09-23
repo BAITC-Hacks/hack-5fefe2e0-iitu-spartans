@@ -30,6 +30,9 @@ services:
       ROUTER_BASE_URL: ${ROUTER_BASE_URL:-}
       ROUTER_API_KEY: ${ROUTER_API_KEY:-}
       ROUTER_MODEL: ${ROUTER_MODEL:-}
+      # Второй движок окна сравнения в панели супервизора (Google Gemini); пусто — окно сообщает, что ключ не задан.
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-}
       # Основной путь выбора сценария. Если сервис недоступен, web решает сам (маршрутизатор ядра или демо).
       ROUTER_URL: http://router:8000
     ports:

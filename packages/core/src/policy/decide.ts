@@ -22,7 +22,7 @@ export type Priority = "normal" | "high" | "urgent";
 export type PolicyAction =
   | { kind: "run"; queue: string[] }
   | { kind: "clarify"; options: string[] }
-  | { kind: "continue"; scenarioId: string }
+  | { kind: "continue"; scenarioId: string; /** Какие параметры сценария клиент назвал этой репликой. */ filled: string[] }
   | { kind: "handoff"; reason: "low_confidence_twice" | "client_request" };
 
 export interface PolicyState {
@@ -39,10 +39,16 @@ export interface PolicyResult {
   nextState: PolicyState;
 }
 
+/** Системные намерения (непонятно, вне тематики, прощание) — не сценарии: их нельзя продолжать и предлагать как вариант. */
+function isSystemIntent(id: string): boolean {
+  return id.startsWith("SYS_");
+}
+
 /** Два самых вероятных различных сценария среди выбранных и альтернатив — варианты уточняющего вопроса. */
 function topOptions(decision: RouteDecision, count = 2): string[] {
   const ranked = [...decision.scenarios, ...decision.alternatives].sort((a, b) => b.confidence - a.confidence);
-  return [...new Set(ranked.map((s) => s.scenario_id))].slice(0, count);
+  // «Вы хотите SYS_UNCLEAR или другое?» — клиент не должен слышать служебные идентификаторы.
+  return [...new Set(ranked.map((s) => s.scenario_id).filter((id) => !isSystemIntent(id)))].slice(0, count);
 }
 
 export function decide(
@@ -51,8 +57,14 @@ export function decide(
   priorityOf: (scenarioId: string) => Priority,
 ): PolicyResult {
   // Продолжение активного сценария: заполняются слоты, маршрутизация не повторяется.
-  if (decision.is_continuation && state.activeScenario) {
-    return { action: { kind: "continue", scenarioId: state.activeScenario }, nextState: state };
+  // Если модель при этом назвала системное намерение (реплика непонятна или вне тематики), продолжать нечего —
+  // решение принимается по порогам ниже, и клиент получает вопрос, а не «продолжаем».
+  const primary = decision.scenarios[0]?.scenario_id;
+  if (decision.is_continuation && state.activeScenario && !(primary !== undefined && isSystemIntent(primary))) {
+    return {
+      action: { kind: "continue", scenarioId: state.activeScenario, filled: Object.keys(decision.slots) },
+      nextState: state,
+    };
   }
 
   // Просьба клиента соединить с оператором исполняется без переспроса.
@@ -67,10 +79,15 @@ export function decide(
       .sort((a, b) => Number(priorityOf(b.scenario_id) === "urgent") - Number(priorityOf(a.scenario_id) === "urgent"))
       .map((s) => s.scenario_id);
     const [first] = queue;
-    return {
-      action: { kind: "run", queue },
-      nextState: first === undefined ? INITIAL_POLICY_STATE : { lowConfidenceStreak: 0, activeScenario: first },
-    };
+    // Системное намерение не становится активным сценарием: непонятная реплика не сбрасывает тему разговора,
+    // прощание — завершает его.
+    const nextState: PolicyState =
+      first === undefined || first === "SYS_GOODBYE"
+        ? INITIAL_POLICY_STATE
+        : isSystemIntent(first)
+          ? { ...state, lowConfidenceStreak: 0 }
+          : { lowConfidenceStreak: 0, activeScenario: first };
+    return { action: { kind: "run", queue }, nextState };
   }
 
   const top = Math.max(...decision.scenarios.map((s) => s.confidence));

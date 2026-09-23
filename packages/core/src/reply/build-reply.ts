@@ -20,11 +20,12 @@ export function replyLanguage(language: Language): ReplyLanguage {
 
 const FALLBACK: Record<
   ReplyLanguage,
-  { handoff: string; continue: string; nextTopic: string; other: string; unknown: string; openQuestion: string }
+  { handoff: string; continue: string; accepted: string; nextTopic: string; other: string; unknown: string; openQuestion: string }
 > = {
   ru: {
     handoff: "Соединяю с оператором и передаю суть вопроса — повторять не придётся.",
     continue: "Спасибо, продолжаем.",
+    accepted: "Спасибо, принял. Проверяю.",
     nextTopic: "Затем вернёмся к вопросу: {label}.",
     other: "другое",
     unknown: "Не расслышал, повторите, пожалуйста.",
@@ -33,6 +34,7 @@ const FALLBACK: Record<
   kk: {
     handoff: "Операторға қосамын, сұрағыңыздың мәнін жеткіземін — қайталаудың қажеті жоқ.",
     continue: "Рақмет, жалғастырамыз.",
+    accepted: "Рақмет, қабылдадым. Тексеріп жатырмын.",
     nextTopic: "Содан кейін келесі сұраққа ораламыз: {label}.",
     other: "басқа нәрсе",
     unknown: "Естімей қалдым, қайталап жіберіңізші.",
@@ -67,13 +69,20 @@ export function buildReply(
       return second ? `${opening} ${FALLBACK[lang].nextTopic.replace("{label}", label(second))}` : opening;
     }
     case "clarify": {
+      const [optionA, optionB] = action.options;
+      // Без хотя бы одного настоящего варианта шаблон «вы хотите A или B?» превращается в чтение полей — спрашиваем открыто.
+      if (!optionA) return FALLBACK[lang].openQuestion;
       const template = catalog.system_intents.find((i) => i.id === "SYS_UNCLEAR")?.response?.[lang];
       if (!template) return FALLBACK[lang].unknown;
-      return template.replace("{option_a}", label(action.options[0])).replace("{option_b}", label(action.options[1]));
+      return template.replace("{option_a}", label(optionA)).replace("{option_b}", label(optionB));
     }
     case "handoff":
       return FALLBACK[lang].handoff;
     case "continue":
-      return FALLBACK[lang].continue;
+      // Клиент назвал данные — подтверждаем приём; ничего не назвал — повторяем вопрос сценария, чтобы он знал,
+      // что сказать. Голое «продолжаем» без вопроса — тупик, повтор вопроса после ответа — противоречие.
+      return action.filled.length > 0
+        ? FALLBACK[lang].accepted
+        : `${FALLBACK[lang].continue} ${scenarioOpening(action.scenarioId, lang, catalog)}`;
   }
 }

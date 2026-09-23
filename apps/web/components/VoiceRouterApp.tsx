@@ -5,8 +5,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useI18n } from "../lib/i18n";
 import { AppHeader } from "./AppHeader";
 import { CallScreen, CallStartButton } from "./CallScreen";
+import { fetchEngines, postCompare, type EngineInfo } from "./compare-client";
+import { CompareModal, type CompareState } from "./CompareModal";
 import { Composer } from "./Composer";
 import { MessageList } from "./MessageList";
+import { SettingsModal } from "./SettingsModal";
 import { SupervisorStats } from "./SupervisorStats";
 import { TracePanel } from "./TracePanel";
 import { TurnHistory } from "./TurnHistory";
@@ -62,6 +65,18 @@ export function VoiceRouterApp() {
       .catch(() => setServerVoice(false));
   }, []);
 
+  // Окно сравнения движков: кнопка появляется, когда на сервере настроен хотя бы один движок.
+  const [engines, setEngines] = useState<EngineInfo[]>([]);
+  const [compare, setCompare] = useState<CompareState>({ status: "idle" });
+  const [compareOpen, setCompareOpen] = useState(false);
+  const [compareIndex, setCompareIndex] = useState<number | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  useEffect(() => {
+    void fetchEngines().then(setEngines);
+  }, []);
+  // Состояние диалога, с которым уходил каждый ход: сравнение повторяет ход в том же контексте, что и робот.
+  const turnStatesRef = useRef<ClientDialogState[]>([]);
+
   const synthesis = useSpeechSynthesis();
   const nextId = useRef(1);
   // Ref, а не state: голосовой колбэк может прийти раньше перерисовки, и второй запрос не должен уйти.
@@ -84,6 +99,7 @@ export function VoiceRouterApp() {
 
       if (result.ok) {
         const { reply, trace, state } = result.data;
+        turnStatesRef.current.push(dialogState);
         setDialogState(state);
         setTraces((current) => [...current, trace]);
         setSelectedTurn(null);
@@ -136,7 +152,26 @@ export function VoiceRouterApp() {
     setMessages([]);
     setTraces([]);
     setSelectedTurn(null);
+    turnStatesRef.current = [];
+    setCompare({ status: "idle" });
+    setCompareIndex(null);
   }, [synthesis.cancel, recognition.stop, call.hangUp]);
+
+  const runCompare = useCallback(
+    async (index: number) => {
+      const trace = traces[index];
+      if (!trace) return;
+      const state = turnStatesRef.current[index] ?? INITIAL_CLIENT_STATE;
+      setCompareIndex(index);
+      setCompareOpen(true);
+      setCompare({ status: "loading", utterance: trace.transcript });
+      const result = await postCompare({ utterance: trace.transcript, state });
+      setCompare(
+        result.ok ? { status: "done", data: result.data } : { status: "error", utterance: trace.transcript, failure: result.failure },
+      );
+    },
+    [traces],
+  );
 
   // Приоритет статусов: слушание важнее ожидания ответа, ожидание важнее озвучивания.
   const status: VoiceStatus = recognition.listening
@@ -152,6 +187,7 @@ export function VoiceRouterApp() {
   const lastScenario = lastTrace?.decision?.scenarios[0];
   const lastClient = [...messages].reverse().find((m) => m.role === "client");
   const lastBot = [...messages].reverse().find((m) => m.role === "bot");
+  const compareAvailable = engines.some((engine) => engine.available);
 
   return (
     <>
@@ -162,9 +198,15 @@ export function VoiceRouterApp() {
             <h2 id="conversation-title" className="card__title">
               {t("conv.title")}
             </h2>
-            <button type="button" className="button button--ghost" onClick={resetConversation} disabled={pending}>
-              {t("conv.reset")}
-            </button>
+            <div className="card__actions">
+              {serverVoice && !call.active ? <CallStartButton onStart={startCall} disabled={pending || recognition.listening} /> : null}
+              <button type="button" className="button button--ghost button--small" onClick={() => setSettingsOpen(true)}>
+                {t("settings.open")}
+              </button>
+              <button type="button" className="button button--ghost button--small" onClick={resetConversation} disabled={pending}>
+                {t("conv.reset")}
+              </button>
+            </div>
           </div>
           {call.active ? (
             <CallScreen
@@ -186,23 +228,11 @@ export function VoiceRouterApp() {
             />
           ) : (
             <>
-              {serverVoice ? <CallStartButton onStart={startCall} disabled={pending || recognition.listening} /> : null}
               <VoiceBar
                 status={status}
                 recognitionSupported={recognition.supported}
-                synthesisSupported={synthesis.supported}
                 listening={recognition.listening}
                 busy={pending}
-                lang={recognitionLang}
-                onLangChange={setRecognitionLang}
-                speakReplies={speakReplies}
-                onSpeakRepliesChange={(value) => {
-                  setSpeakReplies(value);
-                  if (!value) synthesis.cancel();
-                }}
-                showNoKazakhVoice={
-                  recognitionLang === "kk-KZ" && synthesis.supported === true && synthesis.voicesLoaded && !synthesis.hasKazakhVoice
-                }
                 onStart={startListening}
                 onStop={recognition.stop}
               />
@@ -216,7 +246,19 @@ export function VoiceRouterApp() {
             <h2 id="trace-title" className="card__title">
               {t("trace.title")}
             </h2>
-            {shownTrace ? <span className="badge badge--turn">{t("trace.turn", { n: shownTrace.turn })}</span> : null}
+            <div className="card__actions">
+              {shownTrace ? <span className="badge badge--turn">{t("trace.turn", { n: shownTrace.turn })}</span> : null}
+              {compareAvailable ? (
+                <button
+                  type="button"
+                  className="button button--ghost button--small"
+                  onClick={() => void runCompare(shownIndex)}
+                  disabled={!shownTrace || compare.status === "loading"}
+                >
+                  {t("compare.open")}
+                </button>
+              ) : null}
+            </div>
           </div>
           {shownTrace ? <TracePanel trace={shownTrace} /> : <p className="muted">{t("trace.empty")}</p>}
           <section className="section">
@@ -226,6 +268,31 @@ export function VoiceRouterApp() {
           <SupervisorStats refreshKey={traces.length} />
         </aside>
       </main>
+      <SettingsModal
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        lang={recognitionLang}
+        onLangChange={setRecognitionLang}
+        listening={recognition.listening}
+        speakReplies={speakReplies}
+        onSpeakRepliesChange={(value) => {
+          setSpeakReplies(value);
+          if (!value) synthesis.cancel();
+        }}
+        synthesisSupported={synthesis.supported}
+        showNoKazakhVoice={
+          recognitionLang === "kk-KZ" && synthesis.supported === true && synthesis.voicesLoaded && !synthesis.hasKazakhVoice
+        }
+        engines={engines}
+      />
+      <CompareModal
+        open={compareOpen}
+        state={compare}
+        onClose={() => setCompareOpen(false)}
+        onRerun={() => {
+          if (compareIndex !== null) void runCompare(compareIndex);
+        }}
+      />
     </>
   );
 }
