@@ -1,15 +1,19 @@
 name: CI
 
 # Проверка на чистой Linux-машине: установка по lock-файлу, типы, тесты.
-# Запускается на каждый pull request и на каждое изменение main.
+#
+# Автозапуск на pull request и push отключён: в организации BAITC-Hacks задачи GitHub Actions
+# не стартуют из-за блокировки биллинга организации (запуск 35840498013, 23.09.2026:
+# "The job was not started because your account is locked due to a billing issue").
+# До снятия блокировки та же проверка выполняется локально одной командой: `pnpm verify`.
+# Чтобы вернуть автозапуск, добавьте в `on:` события `pull_request` и `push: branches: [main]`.
 on:
-  pull_request:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+# Новый запуск для той же ветки отменяет предыдущий, если тот ещё идёт.
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -22,14 +26,18 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # Версия pnpm берётся из поля packageManager в package.json
+      # Версия pnpm берётся из поля packageManager в package.json — одна версия у всех.
       - uses: pnpm/action-setup@v6
 
+      # Кэш хранилища pnpm. Ключ — хэш pnpm-lock.yaml: пока lock-файл не менялся,
+      # пакеты берутся из кэша; изменилась одна зависимость — докачивается только она.
       - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: pnpm
 
+      # --frozen-lockfile: установка строго по lock-файлу; расхождение с package.json — ошибка,
+      # а не тихое обновление версий.
       - name: Установка зависимостей по lock-файлу
         run: pnpm install --frozen-lockfile
 
