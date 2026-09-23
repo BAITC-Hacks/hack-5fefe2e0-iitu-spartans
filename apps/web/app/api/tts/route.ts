@@ -26,8 +26,9 @@ export async function GET(request: Request) {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ""}` },
     body: JSON.stringify({
-      model: process.env.TTS_MODEL ?? "gpt-4o-mini-tts",
-      voice: process.env.TTS_VOICE ?? "coral",
+      // Compose передаёт незаданную переменную пустой строкой, поэтому ||, а не ??.
+      model: process.env.TTS_MODEL || "gpt-4o-mini-tts",
+      voice: process.env.TTS_VOICE || "coral",
       input: text,
       instructions: INSTRUCTIONS[language],
       response_format: "mp3",

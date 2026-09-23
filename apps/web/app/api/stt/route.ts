@@ -20,7 +20,7 @@ const EXTENSIONS: Array<[string, string]> = [
 ];
 
 export function GET() {
-  return Response.json({ available: hasModelKey(), model: process.env.STT_MODEL ?? "gpt-transcribe" });
+  return Response.json({ available: hasModelKey(), model: process.env.STT_MODEL || "gpt-transcribe" });
 }
 
 export async function POST(request: Request) {

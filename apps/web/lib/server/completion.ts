@@ -16,7 +16,8 @@ export function hasModelKey(): boolean {
 }
 
 export async function completeWithOpenAI(messages: RouterMessages): Promise<string> {
-  const model = process.env.ROUTER_MODEL ?? DEFAULT_MODEL;
+  // Compose передаёт незаданную переменную пустой строкой, поэтому ||, а не ??: пустое значение ведёт к умолчанию.
+  const model = process.env.ROUTER_MODEL || DEFAULT_MODEL;
   const body: Record<string, unknown> = {
     model,
     messages: [
@@ -26,7 +27,7 @@ export async function completeWithOpenAI(messages: RouterMessages): Promise<stri
     response_format: { type: "json_object" },
   };
   // Модели семейства gpt-5 рассуждают по умолчанию; для выбора сценария рассуждение не нужно, а задержка растёт.
-  if (model.startsWith("gpt-5")) body.reasoning_effort = process.env.ROUTER_REASONING_EFFORT ?? "none";
+  if (model.startsWith("gpt-5")) body.reasoning_effort = process.env.ROUTER_REASONING_EFFORT || "none";
 
   const response = await fetch(ENDPOINT, {
     method: "POST",
