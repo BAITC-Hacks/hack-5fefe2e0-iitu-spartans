@@ -67,6 +67,15 @@ describe("buildReply — ответ робота по действию поли�
     );
   });
 
+  it("непонятная реплика без вариантов (например, приветствие) — открытый вопрос без полей шаблона", () => {
+    // Живой прогон: на «Здравствуйте.» робот произнёс шаблон SYS_UNCLEAR с {option_a} и {option_b} как есть.
+    for (const lang of ["ru", "kk"] as const) {
+      const text = buildReply({ kind: "run", queue: ["SYS_UNCLEAR"] }, lang, CATALOG, LABELS);
+      expect(text).not.toMatch(/[{}]/);
+      expect(text.length).toBeGreaterThan(10);
+    }
+  });
+
   it("системное намерение — фраза из набора", () => {
     expect(buildReply({ kind: "run", queue: ["SYS_OUT_OF_SCOPE"] }, "ru", CATALOG, LABELS)).toBe("С этим я не помогу.");
   });

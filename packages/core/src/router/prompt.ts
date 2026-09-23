@@ -45,7 +45,8 @@ export function buildRouterMessages(catalog: Catalog, context: DialogContext, ut
     "Rules:",
     "- One utterance may contain several requests: list every scenario in the order the client mentioned them.",
     "- confidence is your probability (0..1) that the scenario is correct; do not inflate it.",
-    "- reason: one short sentence naming the words or facts in the utterance that decided the choice.",
+    "- reason: one short sentence in Russian: quote the client's words that decided the choice; if a 'Not this if' rule" +
+      " separated it from a neighbouring scenario, name that scenario.",
     "- alternatives: up to 3 other plausible scenarios with their confidence.",
     "- language: ru, kk, or mixed (both languages inside the utterance).",
     "- slots: values stated in the utterance (phone, dates, plate numbers), normalized; empty object if none.",
