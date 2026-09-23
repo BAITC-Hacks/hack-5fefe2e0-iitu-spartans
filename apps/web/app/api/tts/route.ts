@@ -10,9 +10,10 @@ export const dynamic = "force-dynamic";
 const ENDPOINT = "https://api.openai.com/v1/audio/speech";
 const MAX_TEXT = 600;
 
+// Темп задан явно: «без спешки» в прежней инструкции растягивало каждую фразу и читалось как медленный робот.
 const INSTRUCTIONS: Record<string, string> = {
-  kk: "Сен сақтандыру компаниясы байланыс орталығының сыпайы операторысың. Қазақ тілінде анық, жылы және қысқа сөйле.",
-  ru: "Ты вежливый оператор контакт-центра страховой компании. Говори по-русски чётко, тепло и без спешки.",
+  kk: "Сен сақтандыру компаниясы байланыс орталығының сыпайы, жинақы операторысың. Қазақ тілінде анық, жылы, жылдам және қысқа сөйле, ұзақ кідіріссіз.",
+  ru: "Ты вежливый, собранный оператор контакт-центра страховой компании. Говори по-русски чётко, тепло, живо и быстро, без длинных пауз и растягивания слов.",
 };
 
 export async function GET(request: Request) {
@@ -28,7 +29,7 @@ export async function GET(request: Request) {
     body: JSON.stringify({
       // Compose передаёт незаданную переменную пустой строкой, поэтому ||, а не ??.
       model: process.env.TTS_MODEL || "gpt-4o-mini-tts",
-      voice: process.env.TTS_VOICE || "coral",
+      voice: process.env.TTS_VOICE || "marin",
       input: text,
       instructions: INSTRUCTIONS[language],
       response_format: "mp3",
