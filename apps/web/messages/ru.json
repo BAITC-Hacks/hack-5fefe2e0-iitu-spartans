@@ -85,5 +85,23 @@
 
   "history.title": "История ходов",
   "history.empty": "Ходов пока нет.",
-  "history.show": "Показать ход {n}"
+  "history.show": "Показать ход {n}",
+  "call.start": "Позвонить роботу",
+  "call.hangUp": "Завершить",
+  "call.title": "Звонок в контакт-центр",
+  "call.timer": "Длительность звонка",
+  "call.phase.connecting": "Соединение…",
+  "call.phase.listening": "Слушаю",
+  "call.phase.hearing": "Вы говорите",
+  "call.phase.transcribing": "Распознаю речь",
+  "call.phase.thinking": "Выбираю сценарий",
+  "call.phase.speaking": "Робот отвечает — можно перебить",
+  "call.you": "Вы",
+  "call.robot": "Робот",
+  "call.scenario": "Сценарий",
+  "call.langAuto": "Русский и казахский — автоматически",
+  "call.micDenied": "Нет доступа к микрофону — разрешите его в браузере",
+  "mic.recog.auto": "Авто: русский и казахский, в том числе вперемешку",
+  "mic.transcribing": "Распознаю речь…",
+  "mic.sttError": "Не удалось распознать речь: {code}"
 }
