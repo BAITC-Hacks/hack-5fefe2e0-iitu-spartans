@@ -1,0 +1,16 @@
+# Separate project: a normal application rebuild cannot remove this local-only
+# access point. The proxy reconnects by Docker DNS after database recreation.
+services:
+  db-access:
+    image: node:24-alpine
+    command: ["node", "/dev-db-proxy.mjs"]
+    ports:
+      - "127.0.0.1:15432:5432"
+    volumes:
+      - ./scripts/dev-db-proxy.mjs:/dev-db-proxy.mjs:ro
+    restart: unless-stopped
+
+networks:
+  default:
+    external: true
+    name: ${DEV_DOCKER_NETWORK:?Start through pnpm dev:web to discover the application network}
