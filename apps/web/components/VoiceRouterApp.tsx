@@ -7,6 +7,7 @@ import { AppHeader } from "./AppHeader";
 import { CallScreen, CallStartButton } from "./CallScreen";
 import { Composer } from "./Composer";
 import { MessageList } from "./MessageList";
+import { SupervisorStats } from "./SupervisorStats";
 import { TracePanel } from "./TracePanel";
 import { TurnHistory } from "./TurnHistory";
 import { postTurn, type TurnFailure } from "./turn-client";
@@ -222,6 +223,7 @@ export function VoiceRouterApp() {
             <h3 className="section__title">{t("history.title")}</h3>
             <TurnHistory traces={traces} selected={shownIndex} onSelect={setSelectedTurn} />
           </section>
+          <SupervisorStats refreshKey={traces.length} />
         </aside>
       </main>
     </>
