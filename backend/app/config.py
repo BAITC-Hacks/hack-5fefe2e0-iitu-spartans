@@ -10,7 +10,9 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=REPO_ROOT / ".env", extra="ignore")
 
     openai_api_key: str = ""
-    router_model: str = ""
+    router_model: str = ""  # пусто -> DEFAULT_ROUTER_MODEL в app/router/router.py
+    router_reasoning_effort: str = ""  # только для reasoning-моделей (gpt-5*, o*): none/minimal/low
+    router_max_output_tokens: int = 400
     response_model: str = ""
     dataset_dir: Path = REPO_ROOT / "case_2" / "voice_router_dataset"
     # «Сегодня» по данным кейса: все относительные даты считаются от него, не от системных часов
