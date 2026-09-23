@@ -14,6 +14,10 @@ class Settings(BaseSettings):
     router_reasoning_effort: str = ""  # только для reasoning-моделей (gpt-5*, o*); пусто -> "none"
     router_max_output_tokens: int = 400
     router_service_tier: str = ""  # пусто -> по умолчанию; "priority" быстрее, но дороже
+    # Политика: >= HIGH — запуск, MID..HIGH — уточнение, < MID дважды — оператор.
+    # Калибровка по runs/ (docs/ROUTER_LOG.md): верный основной сценарий приходит с confidence >= 0.69.
+    policy_high_confidence: float = 0.65
+    policy_mid_confidence: float = 0.40
     response_model: str = ""
     dataset_dir: Path = REPO_ROOT / "case_2" / "voice_router_dataset"
     # «Сегодня» по данным кейса: все относительные даты считаются от него, не от системных часов
