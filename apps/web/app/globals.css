@@ -735,3 +735,552 @@ select {
   font-weight: 700;
   white-space: nowrap;
 }
+
+/* ---- Режим звонка ---- */
+/*
+ * Экран звонка в палитре владельца задачи: градиент от чернильного к фирменному зелёному, белый текст,
+ * стеклянные подложки реплик. Громкость микрофона приходит CSS-переменной --call-level (0..1),
+ * поэтому кольца двигаются без перерисовки React на каждый кадр анализатора.
+ */
+
+.call-start {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 22px 10px 10px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0, 128, 95, 0.3);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.call-start:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(0, 128, 95, 0.38);
+}
+
+.call-start:disabled {
+  background: #9aa3b2;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.call-start__icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.call-screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 460px;
+  padding: 20px 20px 24px;
+  border-radius: 24px;
+  color: #ffffff;
+  background:
+    radial-gradient(120% 70% at 50% 38%, rgba(5, 158, 119, 0.35) 0%, rgba(5, 158, 119, 0) 60%),
+    linear-gradient(165deg, var(--color-ink) 0%, #0b2a2a 45%, var(--color-primary) 100%);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.call-screen :focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.85);
+  outline-offset: 3px;
+}
+
+.call-screen__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.call-screen__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.call-screen__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.call-lang-pill {
+  align-self: flex-start;
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.14);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.call-timer {
+  flex: 0 0 auto;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(7, 18, 34, 0.35);
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.call-screen__stage {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  padding: 36px 0 12px;
+}
+
+.call-orb {
+  --call-level: 0;
+  position: relative;
+  width: 160px;
+  height: 160px;
+  display: grid;
+  place-items: center;
+}
+
+.call-orb__ring,
+.call-orb__arc {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.call-orb__ring--1 {
+  border: 2px solid rgba(255, 255, 255, 0.35);
+}
+
+.call-orb__ring--2 {
+  inset: -22px;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+}
+
+.call-orb__ring--3 {
+  inset: -46px;
+  border: 2px solid rgba(255, 255, 255, 0.08);
+}
+
+.call-orb__arc {
+  inset: -8px;
+  border: 3px solid transparent;
+  opacity: 0;
+}
+
+.call-orb__core {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  background: radial-gradient(circle at 35% 30%, #3fd3a6 0%, var(--color-accent) 45%, var(--color-primary) 100%);
+  box-shadow:
+    0 0 0 6px rgba(255, 255, 255, 0.06),
+    0 18px 40px rgba(0, 0, 0, 0.35),
+    inset 0 -8px 18px rgba(7, 18, 34, 0.25);
+  transition: transform 80ms linear;
+}
+
+/* Соединение: серый приглушённый шар, пока нет доступа к микрофону. */
+.call-orb--connecting .call-orb__core {
+  background: radial-gradient(circle at 35% 30%, #5b6475 0%, #2b3445 100%);
+  animation: call-fade 1.6s ease-in-out infinite;
+}
+
+.call-orb--connecting .call-orb__ring {
+  opacity: 0.5;
+}
+
+/* Слушаю: кольца медленно дышат, робот на линии и ждёт. */
+.call-orb--listening .call-orb__ring--1 {
+  animation: call-breathe 3.2s ease-in-out infinite;
+}
+
+.call-orb--listening .call-orb__ring--2 {
+  animation: call-breathe 3.2s ease-in-out 0.4s infinite;
+}
+
+.call-orb--listening .call-orb__ring--3 {
+  animation: call-breathe 3.2s ease-in-out 0.8s infinite;
+}
+
+/* Клиент говорит: кольца следуют за громкостью голоса. */
+.call-orb--hearing .call-orb__ring {
+  border-color: rgba(122, 240, 200, 0.65);
+  transition: transform 80ms linear;
+}
+
+.call-orb--hearing .call-orb__ring--1 {
+  transform: scale(calc(1 + var(--call-level) * 0.6));
+}
+
+.call-orb--hearing .call-orb__ring--2 {
+  border-color: rgba(122, 240, 200, 0.4);
+  transform: scale(calc(1 + var(--call-level) * 0.45));
+}
+
+.call-orb--hearing .call-orb__ring--3 {
+  border-color: rgba(122, 240, 200, 0.22);
+  transform: scale(calc(1 + var(--call-level) * 0.3));
+}
+
+.call-orb--hearing .call-orb__core {
+  background: radial-gradient(circle at 35% 30%, #7af0c8 0%, #1fbf8f 45%, var(--color-primary) 100%);
+  transform: scale(calc(1 + var(--call-level) * 0.12));
+}
+
+/* Распознавание: быстрая мятная дуга вокруг микрофона. */
+.call-orb--transcribing .call-orb__arc {
+  opacity: 1;
+  border-top-color: #7af0c8;
+  border-right-color: rgba(122, 240, 200, 0.35);
+  animation: call-spin 0.9s linear infinite;
+}
+
+.call-orb--transcribing .call-orb__ring {
+  opacity: 0.6;
+}
+
+/* Выбор сценария: три точки внутри и медленная белая дуга. */
+.call-orb--thinking .call-orb__core {
+  background: radial-gradient(circle at 35% 30%, #2fb88f 0%, var(--color-primary) 60%, #045c46 100%);
+}
+
+.call-orb--thinking .call-orb__arc {
+  opacity: 0.8;
+  border-top-color: rgba(255, 255, 255, 0.75);
+  animation: call-spin 2.4s linear infinite;
+}
+
+/* Робот говорит: светлый шар, эквалайзер и расходящиеся волны. */
+.call-orb--speaking .call-orb__core {
+  color: var(--color-primary);
+  background: radial-gradient(circle at 35% 30%, #ffffff 0%, var(--color-mint) 40%, #9fe3cd 100%);
+}
+
+.call-orb--speaking .call-orb__ring--1 {
+  border-color: rgba(231, 248, 243, 0.7);
+  animation: call-ripple 1.8s ease-out infinite;
+}
+
+.call-orb--speaking .call-orb__ring--2 {
+  border-color: rgba(231, 248, 243, 0.45);
+  animation: call-ripple 1.8s ease-out 0.6s infinite;
+}
+
+.call-orb--speaking .call-orb__ring--3 {
+  border-color: rgba(231, 248, 243, 0.25);
+  animation: call-ripple 1.8s ease-out 1.2s infinite;
+}
+
+.call-dots {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.call-dots span {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ffffff;
+  animation: call-bounce 1.1s ease-in-out infinite;
+}
+
+.call-dots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.call-dots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.call-bars {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 48px;
+}
+
+.call-bars span {
+  --bar: 0.6;
+  width: 6px;
+  height: 100%;
+  border-radius: 3px;
+  background: currentColor;
+  transform: scaleY(var(--bar));
+  animation: call-eq 0.9s ease-in-out infinite;
+}
+
+.call-bars span:nth-child(1) {
+  --bar: 0.45;
+  animation-delay: 0.1s;
+}
+
+.call-bars span:nth-child(2) {
+  --bar: 0.8;
+  animation-delay: 0.35s;
+}
+
+.call-bars span:nth-child(3) {
+  --bar: 1;
+}
+
+.call-bars span:nth-child(4) {
+  --bar: 0.7;
+  animation-delay: 0.25s;
+}
+
+.call-bars span:nth-child(5) {
+  --bar: 0.5;
+  animation-delay: 0.5s;
+}
+
+.call-phase {
+  margin: 0;
+  min-height: 24px;
+  font-size: 17px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.call-captions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.call-caption {
+  margin: 0;
+  max-width: 92%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.call-caption--client {
+  align-self: flex-end;
+  border-color: rgba(122, 240, 200, 0.35);
+  background: rgba(5, 158, 119, 0.3);
+}
+
+.call-caption--bot {
+  align-self: flex-start;
+}
+
+.call-caption__who {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+/* Длинная реплика не раздувает экран звонка: три строки, полный текст остаётся в разговоре и в панели. */
+.call-caption__text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.call-scenario {
+  margin: 0;
+  max-width: 100%;
+  align-self: center;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(7, 18, 34, 0.4);
+  font-size: 13px;
+}
+
+.call-scenario__label {
+  color: #7af0c8;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.call-scenario__value b {
+  font-family: var(--font-mono);
+}
+
+.call-screen__bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.call-hangup {
+  width: 68px;
+  height: 68px;
+  border: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #e5484d;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(229, 72, 77, 0.45);
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.call-hangup:hover {
+  background: #cf3a3f;
+  transform: translateY(-1px);
+}
+
+.call-hangup:active {
+  transform: scale(0.96);
+}
+
+.call-hangup__label {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+@keyframes call-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 0.55;
+  }
+}
+
+@keyframes call-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes call-bounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  40% {
+    transform: translateY(-8px);
+    opacity: 1;
+  }
+}
+
+@keyframes call-eq {
+  0%,
+  100% {
+    transform: scaleY(0.25);
+  }
+  50% {
+    transform: scaleY(var(--bar));
+  }
+}
+
+@keyframes call-ripple {
+  from {
+    transform: scale(0.92);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.18);
+    opacity: 0;
+  }
+}
+
+@keyframes call-fade {
+  0%,
+  100% {
+    opacity: 0.65;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .call-screen {
+    min-height: 420px;
+    padding: 16px;
+  }
+
+  .call-orb {
+    width: 128px;
+    height: 128px;
+  }
+
+  .call-orb__core {
+    width: 104px;
+    height: 104px;
+  }
+
+  .call-orb__ring--2 {
+    inset: -16px;
+  }
+
+  .call-orb__ring--3 {
+    inset: -32px;
+  }
+
+  .call-screen__stage {
+    padding-top: 28px;
+  }
+}
+
+/* Без анимации фаза остаётся различимой по знаку в шаре, цвету и подписи. */
+@media (prefers-reduced-motion: reduce) {
+  .call-screen *,
+  .call-start {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .call-orb--hearing .call-orb__ring,
+  .call-orb--hearing .call-orb__core {
+    transform: none;
+  }
+}

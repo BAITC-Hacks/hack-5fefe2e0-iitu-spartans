@@ -85,5 +85,23 @@
 
   "history.title": "Turn history",
   "history.empty": "No turns yet.",
-  "history.show": "Show turn {n}"
+  "history.show": "Show turn {n}",
+  "call.start": "Call the robot",
+  "call.hangUp": "Hang up",
+  "call.title": "Call to the contact center",
+  "call.timer": "Call duration",
+  "call.phase.connecting": "Connecting…",
+  "call.phase.listening": "Listening",
+  "call.phase.hearing": "You are speaking",
+  "call.phase.transcribing": "Recognizing speech",
+  "call.phase.thinking": "Choosing a scenario",
+  "call.phase.speaking": "Robot is answering — you can interrupt",
+  "call.you": "You",
+  "call.robot": "Robot",
+  "call.scenario": "Scenario",
+  "call.langAuto": "Russian and Kazakh — detected automatically",
+  "call.micDenied": "No microphone access — allow it in the browser",
+  "mic.recog.auto": "Auto: Russian and Kazakh, including mixed speech",
+  "mic.transcribing": "Recognizing speech…",
+  "mic.sttError": "Could not recognize speech: {code}"
 }

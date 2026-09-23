@@ -1,9 +1,10 @@
 "use client";
 
 import { INITIAL_CLIENT_STATE, type ClientDialogState, type Language, type TurnTrace } from "@voice-router/core";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useI18n } from "../lib/i18n";
 import { AppHeader } from "./AppHeader";
+import { CallScreen, CallStartButton } from "./CallScreen";
 import { Composer } from "./Composer";
 import { MessageList } from "./MessageList";
 import { TracePanel } from "./TracePanel";
@@ -12,6 +13,7 @@ import { postTurn, type TurnFailure } from "./turn-client";
 import type { ChatMessage, VoiceStatus } from "./types";
 import { useSpeechRecognition, type RecognitionLang } from "./use-speech-recognition";
 import { useSpeechSynthesis } from "./use-speech-synthesis";
+import { useVoiceCall, type CallReply } from "./use-voice-call";
 import { VoiceBar } from "./VoiceBar";
 
 // Смешанную реплику озвучиваем языком, на котором клиент говорил в микрофон:
@@ -48,6 +50,16 @@ export function VoiceRouterApp() {
   const [selectedTurn, setSelectedTurn] = useState<number | null>(null);
   const [recognitionLang, setRecognitionLang] = useState<RecognitionLang>("ru-RU");
   const [speakReplies, setSpeakReplies] = useState(true);
+  // null — ещё не спросили сервер. Режим звонка доступен, когда на сервере есть ключ модели (распознавание и голос);
+  // без ключа остаются голос браузера и текст (Положение §5.6.6).
+  const [serverVoice, setServerVoice] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    fetch("/api/stt")
+      .then((r) => r.json() as Promise<{ available?: boolean }>)
+      .then((body) => setServerVoice(body.available === true))
+      .catch(() => setServerVoice(false));
+  }, []);
 
   const synthesis = useSpeechSynthesis();
   const nextId = useRef(1);
@@ -59,14 +71,15 @@ export function VoiceRouterApp() {
   }, []);
 
   const sendUtterance = useCallback(
-    async (utterance: string, sttMs?: number) => {
+    async (utterance: string, sttMs?: number, speak = true): Promise<CallReply | null> => {
       const text = utterance.trim();
-      if (!text || pendingRef.current) return;
+      if (!text || pendingRef.current) return null;
       pendingRef.current = true;
       setPending(true);
       pushMessage({ id: nextId.current++, role: "client", text });
 
       const result = await postTurn(sttMs === undefined ? { utterance: text, state: dialogState } : { utterance: text, state: dialogState, sttMs });
+      let answer: CallReply | null = null;
 
       if (result.ok) {
         const { reply, trace, state } = result.data;
@@ -74,15 +87,33 @@ export function VoiceRouterApp() {
         setTraces((current) => [...current, trace]);
         setSelectedTurn(null);
         pushMessage({ id: nextId.current++, role: "bot", text: reply.text });
-        if (speakReplies) synthesis.speak(reply.text, speechLangFor(reply.language, recognitionLang));
+        answer = { text: reply.text, language: reply.language };
+        if (speak && speakReplies) synthesis.speak(reply.text, speechLangFor(reply.language, recognitionLang));
       } else {
         pushMessage(failureMessage(nextId.current++, result.failure));
       }
       pendingRef.current = false;
       setPending(false);
+      return answer;
     },
     [dialogState, pushMessage, speakReplies, synthesis.speak, recognitionLang],
   );
+
+  // В звонке ответ озвучивает голос сервера, поэтому голос браузера здесь не включается.
+  const call = useVoiceCall({
+    onUtterance: (text, sttMs) => sendUtterance(text, sttMs, false),
+    onError: (code) =>
+      pushMessage(
+        code === "mic_denied"
+          ? { id: nextId.current++, role: "error", key: "call.micDenied" }
+          : { id: nextId.current++, role: "error", key: "mic.sttError", vars: { code } },
+      ),
+  });
+
+  const startCall = useCallback(() => {
+    synthesis.cancel();
+    void call.start();
+  }, [synthesis.cancel, call.start]);
 
   const recognition = useSpeechRecognition({
     lang: recognitionLang,
@@ -99,11 +130,12 @@ export function VoiceRouterApp() {
   const resetConversation = useCallback(() => {
     synthesis.cancel();
     recognition.stop();
+    call.hangUp();
     setDialogState(INITIAL_CLIENT_STATE);
     setMessages([]);
     setTraces([]);
     setSelectedTurn(null);
-  }, [synthesis.cancel, recognition.stop]);
+  }, [synthesis.cancel, recognition.stop, call.hangUp]);
 
   // Приоритет статусов: слушание важнее ожидания ответа, ожидание важнее озвучивания.
   const status: VoiceStatus = recognition.listening
@@ -115,6 +147,10 @@ export function VoiceRouterApp() {
         : "idle";
   const shownIndex = selectedTurn ?? traces.length - 1;
   const shownTrace = traces[shownIndex];
+  const lastTrace = traces[traces.length - 1];
+  const lastScenario = lastTrace?.decision?.scenarios[0];
+  const lastClient = [...messages].reverse().find((m) => m.role === "client");
+  const lastBot = [...messages].reverse().find((m) => m.role === "bot");
 
   return (
     <>
@@ -129,27 +165,50 @@ export function VoiceRouterApp() {
               {t("conv.reset")}
             </button>
           </div>
-          <VoiceBar
-            status={status}
-            recognitionSupported={recognition.supported}
-            synthesisSupported={synthesis.supported}
-            listening={recognition.listening}
-            busy={pending}
-            lang={recognitionLang}
-            onLangChange={setRecognitionLang}
-            speakReplies={speakReplies}
-            onSpeakRepliesChange={(value) => {
-              setSpeakReplies(value);
-              if (!value) synthesis.cancel();
-            }}
-            showNoKazakhVoice={
-              recognitionLang === "kk-KZ" && synthesis.supported === true && synthesis.voicesLoaded && !synthesis.hasKazakhVoice
-            }
-            onStart={startListening}
-            onStop={recognition.stop}
-          />
-          <MessageList messages={messages} />
-          <Composer disabled={pending} onSend={(text) => void sendUtterance(text)} />
+          {call.active ? (
+            <CallScreen
+              phase={call.phase}
+              level={call.level}
+              startedAt={call.startedAt}
+              {...(lastClient?.role === "client" ? { clientText: lastClient.text } : {})}
+              {...(lastBot?.role === "bot" ? { botText: lastBot.text } : {})}
+              {...(lastScenario
+                ? {
+                    scenario: {
+                      id: lastScenario.scenario_id,
+                      name: lastTrace?.scenarioNames[lastScenario.scenario_id] ?? lastScenario.scenario_id,
+                      confidence: lastScenario.confidence,
+                    },
+                  }
+                : {})}
+              onHangUp={call.hangUp}
+            />
+          ) : (
+            <>
+              {serverVoice ? <CallStartButton onStart={startCall} disabled={pending || recognition.listening} /> : null}
+              <VoiceBar
+                status={status}
+                recognitionSupported={recognition.supported}
+                synthesisSupported={synthesis.supported}
+                listening={recognition.listening}
+                busy={pending}
+                lang={recognitionLang}
+                onLangChange={setRecognitionLang}
+                speakReplies={speakReplies}
+                onSpeakRepliesChange={(value) => {
+                  setSpeakReplies(value);
+                  if (!value) synthesis.cancel();
+                }}
+                showNoKazakhVoice={
+                  recognitionLang === "kk-KZ" && synthesis.supported === true && synthesis.voicesLoaded && !synthesis.hasKazakhVoice
+                }
+                onStart={startListening}
+                onStop={recognition.stop}
+              />
+              <MessageList messages={messages} />
+              <Composer disabled={pending} onSend={(text) => void sendUtterance(text)} />
+            </>
+          )}
         </section>
         <aside className="card" aria-labelledby="trace-title">
           <div className="card__header">

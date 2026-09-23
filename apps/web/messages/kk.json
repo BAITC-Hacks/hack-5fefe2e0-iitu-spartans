@@ -85,5 +85,23 @@
 
   "history.title": "Қадамдар тарихы",
   "history.empty": "Әзірге қадам жоқ.",
-  "history.show": "{n}-қадамды көрсету"
+  "history.show": "{n}-қадамды көрсету",
+  "call.start": "Роботқа қоңырау шалу",
+  "call.hangUp": "Аяқтау",
+  "call.title": "Байланыс орталығына қоңырау",
+  "call.timer": "Қоңырау ұзақтығы",
+  "call.phase.connecting": "Қосылуда…",
+  "call.phase.listening": "Тыңдап тұрмын",
+  "call.phase.hearing": "Сіз сөйлеп тұрсыз",
+  "call.phase.transcribing": "Сөзіңізді танып жатырмын",
+  "call.phase.thinking": "Сценарий таңдап жатырмын",
+  "call.phase.speaking": "Робот жауап беріп жатыр — сөзін бөлуге болады",
+  "call.you": "Сіз",
+  "call.robot": "Робот",
+  "call.scenario": "Сценарий",
+  "call.langAuto": "Орыс және қазақ тілдері — автоматты түрде",
+  "call.micDenied": "Микрофонға рұқсат жоқ — оны браузерде рұқсат етіңіз",
+  "mic.recog.auto": "Автоматты: орыс және қазақ тілдері, аралас сөйлеу де",
+  "mic.transcribing": "Сөзіңізді танып жатырмын…",
+  "mic.sttError": "Сөзді тану мүмкін болмады: {code}"
 }
