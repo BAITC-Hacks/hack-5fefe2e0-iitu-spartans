@@ -17,9 +17,13 @@ export interface DialogTurn {
 
 /** Состояние диалога, которое клиент хранит и отправляет с каждой репликой. */
 export interface ClientDialogState {
+  /** Выдаётся сервером на первом ходе; по нему ходы связываются в журнале для панели супервизора. */
+  dialogId?: string;
   language?: Language;
   activeScenario?: string;
   lowConfidenceStreak: number;
+  /** Число завершённых ходов. История обрезается, поэтому номер хода считается по счётчику, а не по её длине. */
+  turnCount?: number;
   history: DialogTurn[];
 }
 

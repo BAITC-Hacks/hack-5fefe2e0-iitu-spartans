@@ -12,6 +12,8 @@ import {
 } from "@voice-router/core";
 import { loadCatalog } from "../../../lib/server/catalog";
 import { completeWithOpenAI, hasModelKey } from "../../../lib/server/completion";
+import { pool } from "../../../lib/server/db";
+import { recordTurn } from "../../../lib/server/journal";
 
 /**
  * Один ход диалога: реплика -> выбор сценария -> политика -> ответ из данных набора -> трассировка.
@@ -27,9 +29,11 @@ export const dynamic = "force-dynamic";
 const RequestSchema = z.object({
   utterance: z.string().trim().min(1).max(2000),
   state: z.object({
+    dialogId: z.string().uuid().optional(),
     language: z.enum(["ru", "kk", "mixed"]).optional(),
     activeScenario: z.string().optional(),
     lowConfidenceStreak: z.number().int().min(0).default(0),
+    turnCount: z.number().int().min(0).optional(),
     history: z.array(z.object({ role: z.enum(["client", "bot"]), text: z.string() })).default([]),
   }),
   sttMs: z.number().min(0).optional(),
@@ -122,12 +126,20 @@ export async function POST(request: Request): Promise<Response> {
   const responseMs = Date.now() - responseStarted;
 
   const named = [...effective.scenarios, ...effective.alternatives].map((s) => s.scenario_id);
-  const scenarioNames = Object.fromEntries(named.map((id) => [id, labels.ru[id] ?? id]));
-  const turn = Math.floor(state.history.length / 2) + 1;
+  // Для панели — название без кавычек и с заглавной буквы; кавычки нужны только внутри фразы робота.
+  const displayName = (id: string) => {
+    const name = labels.ru[id]?.replace(/^«|»$/g, "");
+    return name ? name.charAt(0).toUpperCase() + name.slice(1) : id;
+  };
+  const scenarioNames = Object.fromEntries(named.map((id) => [id, displayName(id)]));
+  const turn = (state.turnCount ?? Math.floor(state.history.length / 2)) + 1;
 
+  const dialogId = state.dialogId ?? crypto.randomUUID();
   const nextClientState: ClientDialogState = {
+    dialogId,
     language: effective.language,
     lowConfidenceStreak: nextState.lowConfidenceStreak,
+    turnCount: turn,
     history: [
       ...state.history,
       { role: "client" as const, text: utterance },
@@ -156,5 +168,7 @@ export async function POST(request: Request): Promise<Response> {
     },
     state: nextClientState,
   };
+  // Журнал пишется после расчёта задержки хода: запись в базу не влияет на замер и не обрывает разговор при сбое.
+  if (pool) await recordTurn(pool, dialogId, body.trace, replyText);
   return Response.json(body);
 }
