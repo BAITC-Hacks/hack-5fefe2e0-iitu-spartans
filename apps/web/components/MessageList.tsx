@@ -17,7 +17,12 @@ export function MessageList({ messages }: { messages: ChatMessage[] }) {
   return (
     <ol ref={listRef} className="messages" aria-label={t("conv.messages")} aria-live="polite">
       {messages.length === 0 ? (
-        <li className="messages__empty">{t("conv.empty")}</li>
+        <li className="messages__empty">
+          <span className="welcome-wave" aria-hidden="true"><i /><i /><i /><i /><i /><i /><i /></span>
+          <h3>{t("conv.welcome")}</h3>
+          <p>{t("conv.empty")}</p>
+          <span className="welcome-languages">Русский <span /> Қазақша</span>
+        </li>
       ) : (
         messages.map((message) => {
           if (message.role === "error") {

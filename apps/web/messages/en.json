@@ -7,6 +7,8 @@
   "locale.en": "English",
 
   "conv.title": "Conversation",
+  "conv.welcome": "Listening. Understanding. Helping.",
+  "trace.welcome": "Every decision, explained",
   "conv.empty": "Press the microphone and say how we can help, or type a message below.",
   "conv.client": "Client",
   "conv.robot": "Robot",
