@@ -22,6 +22,8 @@ export interface ClientDialogState {
   language?: Language;
   activeScenario?: string;
   lowConfidenceStreak: number;
+  /** Число завершённых ходов. История обрезается, поэтому номер хода считается по счётчику, а не по её длине. */
+  turnCount?: number;
   history: DialogTurn[];
 }
 

@@ -31,6 +31,7 @@ const RequestSchema = z.object({
     language: z.enum(["ru", "kk", "mixed"]).optional(),
     activeScenario: z.string().optional(),
     lowConfidenceStreak: z.number().int().min(0).default(0),
+    turnCount: z.number().int().min(0).optional(),
     history: z.array(z.object({ role: z.enum(["client", "bot"]), text: z.string() })).default([]),
   }),
   sttMs: z.number().min(0).optional(),
@@ -108,14 +109,20 @@ export async function POST(request: Request): Promise<Response> {
   const responseMs = Date.now() - responseStarted;
 
   const named = [...effective.scenarios, ...effective.alternatives].map((s) => s.scenario_id);
-  const scenarioNames = Object.fromEntries(named.map((id) => [id, labels.ru[id] ?? id]));
-  const turn = Math.floor(state.history.length / 2) + 1;
+  // Для панели — название без кавычек и с заглавной буквы; кавычки нужны только внутри фразы робота.
+  const displayName = (id: string) => {
+    const name = labels.ru[id]?.replace(/^«|»$/g, "");
+    return name ? name.charAt(0).toUpperCase() + name.slice(1) : id;
+  };
+  const scenarioNames = Object.fromEntries(named.map((id) => [id, displayName(id)]));
+  const turn = (state.turnCount ?? Math.floor(state.history.length / 2)) + 1;
 
   const dialogId = state.dialogId ?? crypto.randomUUID();
   const nextClientState: ClientDialogState = {
     dialogId,
     language: effective.language,
     lowConfidenceStreak: nextState.lowConfidenceStreak,
+    turnCount: turn,
     history: [
       ...state.history,
       { role: "client" as const, text: utterance },

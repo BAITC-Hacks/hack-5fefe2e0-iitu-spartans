@@ -27,14 +27,23 @@ function confidenceFor(overlap: number): number {
 
 export function demoDecision(catalog: Catalog, utterance: string): RouteDecision {
   const words = stems(utterance);
-  const ranked = catalog.scenarios
-    .map((s) => {
-      const vocabulary = stems([...s.examples.ru, ...s.examples.kk].join(" "));
-      const overlap = [...words].filter((w) => vocabulary.has(w)).length;
-      return { id: s.scenario_id, overlap };
+  const vocabularies = catalog.scenarios.map((s) => ({
+    id: s.scenario_id,
+    stems: stems([...s.examples.ru, ...s.examples.kk].join(" ")),
+  }));
+  // Редкие слова весят больше частых (IDF): «статус» различает сценарии, а «страховка» есть почти везде.
+  const documentFrequency = new Map<string, number>();
+  for (const v of vocabularies) for (const w of v.stems) documentFrequency.set(w, (documentFrequency.get(w) ?? 0) + 1);
+  const total = vocabularies.length;
+
+  const ranked = vocabularies
+    .map((v) => {
+      const matched = [...words].filter((w) => v.stems.has(w));
+      const score = matched.reduce((sum, w) => sum + Math.log(1 + total / (documentFrequency.get(w) ?? 1)), 0);
+      return { id: v.id, overlap: matched.length, score };
     })
     .filter((r) => r.overlap > 0)
-    .sort((a, b) => b.overlap - a.overlap);
+    .sort((a, b) => b.score - a.score || b.overlap - a.overlap);
 
   const language = KAZAKH_LETTERS.test(utterance) ? "kk" : "ru";
   const [best, ...rest] = ranked;
