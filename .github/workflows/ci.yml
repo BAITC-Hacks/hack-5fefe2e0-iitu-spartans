@@ -1,0 +1,40 @@
+name: CI
+
+# Проверка на чистой Linux-машине: установка по lock-файлу, типы, тесты.
+# Запускается на каждый pull request и на каждое изменение main.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Типы и тесты
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      # Версия pnpm берётся из поля packageManager в package.json
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Установка зависимостей по lock-файлу
+        run: pnpm install --frozen-lockfile
+
+      - name: Проверка типов (TypeScript 7)
+        run: pnpm typecheck
+
+      - name: Тесты (Vitest 5)
+        run: pnpm test
