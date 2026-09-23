@@ -31,4 +31,7 @@ export type { Catalog, CatalogScenario } from "./router/catalog";
 export { buildRouterMessages } from "./router/prompt";
 export type { DialogContext, RouterMessages } from "./router/prompt";
 export { MAX_ATTEMPTS, routeUtterance } from "./router/router";
+export { buildReply, replyLanguage } from "./reply/build-reply";
+export type { ReplyLanguage, ScenarioLabels } from "./reply/build-reply";
+export { demoDecision } from "./reply/demo-router";
 export type { RouteError, RouteOutcome, RouteRequest, RouterDeps } from "./router/router";

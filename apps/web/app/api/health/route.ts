@@ -1,10 +1,8 @@
-import pg from "pg";
+import { pool } from "../../../lib/server/db";
 
 // Проверка готовности: отвечает, жив ли сервис и доступна ли база данных.
 // Используется при запуске через Docker Compose и в разделе «Порядок проверки» README.
 export const dynamic = "force-dynamic";
-
-const pool = process.env.DATABASE_URL ? new pg.Pool({ connectionString: process.env.DATABASE_URL, max: 2 }) : null;
 
 export async function GET(): Promise<Response> {
   if (!pool) {
