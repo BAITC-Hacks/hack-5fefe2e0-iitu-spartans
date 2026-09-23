@@ -97,8 +97,17 @@ describe("decide — политика принятия решений", () => {
   });
 
   it("варианты уточняющего вопроса не содержат системных намерений", () => {
-    const { action } = decide(decision([["SYS_UNCLEAR", 0.6], ["SC17", 0.5]]), INITIAL_POLICY_STATE, priorityOf);
+    const { action } = decide(decision([["SC17", 0.5], ["SYS_UNCLEAR", 0.4]]), INITIAL_POLICY_STATE, priorityOf);
     expect(action).toEqual({ kind: "clarify", options: ["SC17"] });
+  });
+
+  it("модель сама назвала реплику непонятной — уточнение без хвостовых вариантов (открытый вопрос)", () => {
+    // Живой прогон 23.09: на «Здравствуйте, как ваши дела?» (SYS_UNCLEAR 0.08, альтернатива SC01 0.05)
+    // робот спрашивал «вы хотите расчёт стоимости ОГПО или другое?».
+    const low = decide(decision([["SYS_UNCLEAR", 0.08]], { alternatives: [{ scenario_id: "SC01", confidence: 0.05, reason: "t" }] }), INITIAL_POLICY_STATE, priorityOf);
+    expect(low.action).toEqual({ kind: "clarify", options: [] });
+    const mid = decide(decision([["SYS_UNCLEAR", 0.6], ["SC17", 0.5]]), INITIAL_POLICY_STATE, priorityOf);
+    expect(mid.action).toEqual({ kind: "clarify", options: [] });
   });
 
   it("запуск сценария сбрасывает счётчик низкой уверенности и запоминает активный сценарий", () => {

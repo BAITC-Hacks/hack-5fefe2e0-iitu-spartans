@@ -46,6 +46,10 @@ function isSystemIntent(id: string): boolean {
 
 /** Два самых вероятных различных сценария среди выбранных и альтернатив — варианты уточняющего вопроса. */
 function topOptions(decision: RouteDecision, count = 2): string[] {
+  // Модель сама назвала реплику непонятной или не по теме (приветствие, светская фраза): хвостовые альтернативы —
+  // шум, и «вы хотите расчёт ОГПО или другое?» на «как дела?» звучит как угадывание. Без вариантов — открытый вопрос.
+  const primary = decision.scenarios[0]?.scenario_id;
+  if (primary !== undefined && isSystemIntent(primary)) return [];
   const ranked = [...decision.scenarios, ...decision.alternatives].sort((a, b) => b.confidence - a.confidence);
   // «Вы хотите SYS_UNCLEAR или другое?» — клиент не должен слышать служебные идентификаторы.
   return [...new Set(ranked.map((s) => s.scenario_id).filter((id) => !isSystemIntent(id)))].slice(0, count);
