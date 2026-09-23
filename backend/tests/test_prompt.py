@@ -33,3 +33,11 @@ def test_static_prompt_is_deterministic_and_has_no_utterance():
     assert static_prompt() == static_prompt()
     assert marker not in static_prompt()
     assert marker in dynamic_input(marker, {"active_scenario": "SC17"})
+
+
+def test_greeting_alone_is_unclear_not_goodbye():
+    # Живой прогон 23.09: на «Здравствуйте» сервис выбрал SYS_GOODBYE, и робот попрощался в ответ на приветствие.
+    prompt = static_prompt()
+    assert re.search(r"only a greeting[^\n]*SYS_UNCLEAR", prompt)
+    goodbye = next(line for line in prompt.splitlines() if line.startswith("- SYS_GOODBYE"))
+    assert "never a greeting" in goodbye
