@@ -61,7 +61,7 @@ export async function transcribe(
 
 // Словарь терминов собран из данных набора скриптом glossary-build и лежит рядом с модулем STT ядра.
 const GLOSSARY_FILE =
-  process.env.STT_GLOSSARY ??
+  process.env.STT_GLOSSARY ||
   path.resolve(/*turbopackIgnore: true*/ process.cwd(), "../../packages/core/src/stt/stt-glossary.json");
 
 let cachedHints: TranscriptionHints | null = null;
@@ -70,7 +70,8 @@ let cachedHints: TranscriptionHints | null = null;
 export function transcriptionHints(): TranscriptionHints {
   if (cachedHints) return cachedHints;
   const glossary = GlossarySchema.parse(JSON.parse(readFileSync(GLOSSARY_FILE, "utf8")));
-  const model = (process.env.STT_MODEL ?? DEFAULT_MODEL) as SttModel;
+  // Compose передаёт незаданную переменную пустой строкой, поэтому ||, а не ??.
+  const model = (process.env.STT_MODEL || DEFAULT_MODEL) as SttModel;
   cachedHints = buildTranscriptionHints(glossary, { model });
   return cachedHints;
 }

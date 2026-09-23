@@ -8,7 +8,7 @@ import { CatalogSchema, type Catalog, type Priority, type ScenarioLabels } from 
  */
 
 // Путь к данным читается во время работы сервера, а не при сборке: пометка turbopackIgnore исключает его из трассировки сборки.
-const DATA_DIR = process.env.DATA_DIR ?? path.resolve(/*turbopackIgnore: true*/ process.cwd(), "../../data/kit");
+const DATA_DIR = process.env.DATA_DIR || path.resolve(/*turbopackIgnore: true*/ process.cwd(), "../../data/kit");
 
 /** Русские и казахские названия сценариев — из таблицы «Сценарии» README набора (в scenarios.json они на английском). */
 function labelsFromReadme(file: string): Record<string, string> {
