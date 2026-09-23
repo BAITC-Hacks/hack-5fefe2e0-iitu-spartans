@@ -1,0 +1,9 @@
+__MACOSX/
+.DS_Store
+.env
+__pycache__/
+.venv/
+node_modules/
+*.pyc
+predictions*.json
+runs/

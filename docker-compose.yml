@@ -1,0 +1,11 @@
+# Заготовка: пока только backend. Frontend добавится позже.
+services:
+  backend:
+    build: ./backend
+    env_file: .env
+    environment:
+      DATASET_DIR: /data
+    volumes:
+      - ./case_2/voice_router_dataset:/data:ro
+    ports:
+      - "8000:8000"
