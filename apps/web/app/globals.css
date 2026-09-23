@@ -131,6 +131,7 @@ select {
 
 /* ---------- Раскладка ---------- */
 
+/* Колонки одной высоты: карточка разговора тянется до панели супервизора, лента сообщений заполняет остаток. */
 .app-main {
   max-width: 1320px;
   margin: 0 auto;
@@ -138,7 +139,7 @@ select {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
   gap: 24px;
-  align-items: start;
+  align-items: stretch;
 }
 
 @media (max-width: 980px) {
@@ -154,6 +155,8 @@ select {
   box-shadow: var(--shadow-card);
   padding: 24px;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .card__header {
@@ -233,17 +236,23 @@ select {
 .voice-bar {
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 20px;
+  gap: 18px;
+  padding: 14px 18px;
   border-radius: var(--radius-md);
   background: var(--color-mint);
   flex-wrap: wrap;
 }
 
+.voice-bar__hint {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
 .mic-button {
   position: relative;
-  width: 88px;
-  height: 88px;
+  width: 76px;
+  height: 76px;
   flex: 0 0 auto;
   border-radius: 50%;
   border: 0;
@@ -304,7 +313,7 @@ select {
 .voice-bar__controls {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 4px;
   min-width: 0;
   flex: 1 1 220px;
 }
@@ -362,10 +371,11 @@ select {
 
 .messages {
   list-style: none;
-  margin: 20px 0 0;
+  margin: 16px 0 0;
   padding: 16px;
-  min-height: 260px;
-  max-height: 52vh;
+  flex: 1 1 auto;
+  min-height: 220px;
+  max-height: 60vh;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -743,16 +753,17 @@ select {
  * поэтому кольца двигаются без перерисовки React на каждый кадр анализатора.
  */
 
+/* Кнопка звонка живёт в строке действий шапки карточки: компактная, той же высоты, что соседние кнопки. */
 .call-start {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 22px 10px 10px;
+  gap: 8px;
+  padding: 6px 16px 6px 6px;
   border: 0;
   border-radius: 999px;
   background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
   color: #ffffff;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 8px 20px rgba(0, 128, 95, 0.3);
@@ -771,8 +782,8 @@ select {
 }
 
 .call-start__icon {
-  width: 34px;
-  height: 34px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
@@ -1554,4 +1565,67 @@ select {
 .compare-hint {
   margin: 14px 0 0;
   font-size: 13px;
+}
+
+/* ---------- Окно настроек ---------- */
+
+.settings-section + .settings-section {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.engine-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.engine-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--color-gray);
+  font-size: 14px;
+}
+
+.engine-item__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #9aa3b2;
+}
+
+.engine-item--ready .engine-item__dot {
+  background: var(--color-accent);
+}
+
+.engine-item--missing .engine-item__dot {
+  background: var(--color-warn);
+}
+
+.engine-item__name {
+  font-weight: 700;
+}
+
+.engine-item__state {
+  color: var(--color-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }

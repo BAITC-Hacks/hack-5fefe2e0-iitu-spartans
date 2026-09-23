@@ -9,6 +9,7 @@ import { fetchEngines, postCompare, type EngineInfo } from "./compare-client";
 import { CompareModal, type CompareState } from "./CompareModal";
 import { Composer } from "./Composer";
 import { MessageList } from "./MessageList";
+import { SettingsModal } from "./SettingsModal";
 import { SupervisorStats } from "./SupervisorStats";
 import { TracePanel } from "./TracePanel";
 import { TurnHistory } from "./TurnHistory";
@@ -69,6 +70,7 @@ export function VoiceRouterApp() {
   const [compare, setCompare] = useState<CompareState>({ status: "idle" });
   const [compareOpen, setCompareOpen] = useState(false);
   const [compareIndex, setCompareIndex] = useState<number | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   useEffect(() => {
     void fetchEngines().then(setEngines);
   }, []);
@@ -196,9 +198,15 @@ export function VoiceRouterApp() {
             <h2 id="conversation-title" className="card__title">
               {t("conv.title")}
             </h2>
-            <button type="button" className="button button--ghost" onClick={resetConversation} disabled={pending}>
-              {t("conv.reset")}
-            </button>
+            <div className="card__actions">
+              {serverVoice && !call.active ? <CallStartButton onStart={startCall} disabled={pending || recognition.listening} /> : null}
+              <button type="button" className="button button--ghost button--small" onClick={() => setSettingsOpen(true)}>
+                {t("settings.open")}
+              </button>
+              <button type="button" className="button button--ghost button--small" onClick={resetConversation} disabled={pending}>
+                {t("conv.reset")}
+              </button>
+            </div>
           </div>
           {call.active ? (
             <CallScreen
@@ -220,23 +228,11 @@ export function VoiceRouterApp() {
             />
           ) : (
             <>
-              {serverVoice ? <CallStartButton onStart={startCall} disabled={pending || recognition.listening} /> : null}
               <VoiceBar
                 status={status}
                 recognitionSupported={recognition.supported}
-                synthesisSupported={synthesis.supported}
                 listening={recognition.listening}
                 busy={pending}
-                lang={recognitionLang}
-                onLangChange={setRecognitionLang}
-                speakReplies={speakReplies}
-                onSpeakRepliesChange={(value) => {
-                  setSpeakReplies(value);
-                  if (!value) synthesis.cancel();
-                }}
-                showNoKazakhVoice={
-                  recognitionLang === "kk-KZ" && synthesis.supported === true && synthesis.voicesLoaded && !synthesis.hasKazakhVoice
-                }
                 onStart={startListening}
                 onStop={recognition.stop}
               />
@@ -272,6 +268,23 @@ export function VoiceRouterApp() {
           <SupervisorStats refreshKey={traces.length} />
         </aside>
       </main>
+      <SettingsModal
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        lang={recognitionLang}
+        onLangChange={setRecognitionLang}
+        listening={recognition.listening}
+        speakReplies={speakReplies}
+        onSpeakRepliesChange={(value) => {
+          setSpeakReplies(value);
+          if (!value) synthesis.cancel();
+        }}
+        synthesisSupported={synthesis.supported}
+        showNoKazakhVoice={
+          recognitionLang === "kk-KZ" && synthesis.supported === true && synthesis.voicesLoaded && !synthesis.hasKazakhVoice
+        }
+        engines={engines}
+      />
       <CompareModal
         open={compareOpen}
         state={compare}

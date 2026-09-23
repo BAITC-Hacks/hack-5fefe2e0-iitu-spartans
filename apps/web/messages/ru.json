@@ -139,5 +139,12 @@
   "compare.error": "Сравнение не удалось",
   "compare.hint": "Сравнение — инструмент супервизора: оно не меняет ход диалога и не пишется в журнал.",
   "engine.openai": "ChatGPT · OpenAI",
-  "engine.gemini": "Gemini · Google"
+  "engine.gemini": "Gemini · Google",
+
+  "settings.open": "Настройки",
+  "settings.title": "Настройки разговора",
+  "settings.voice": "Голос",
+  "settings.engines": "Движки выбора сценария",
+  "settings.ready": "настроен",
+  "mic.hint": "Нажмите и говорите на русском или казахском; язык и озвучивание — в настройках."
 }

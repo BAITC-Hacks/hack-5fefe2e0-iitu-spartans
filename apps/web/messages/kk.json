@@ -139,5 +139,12 @@
   "compare.error": "Салыстыру сәтсіз аяқталды",
   "compare.hint": "Салыстыру — супервизор құралы: ол диалог барысын өзгертпейді және журналға жазылмайды.",
   "engine.openai": "ChatGPT · OpenAI",
-  "engine.gemini": "Gemini · Google"
+  "engine.gemini": "Gemini · Google",
+
+  "settings.open": "Баптаулар",
+  "settings.title": "Сөйлесу баптаулары",
+  "settings.voice": "Дауыс",
+  "settings.engines": "Сценарий таңдау қозғалтқыштары",
+  "settings.ready": "бапталған",
+  "mic.hint": "Басып, орысша немесе қазақша сөйлеңіз; тіл мен дыбыстау — баптауларда."
 }
