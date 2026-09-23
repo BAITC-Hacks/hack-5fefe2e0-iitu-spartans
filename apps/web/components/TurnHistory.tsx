@@ -5,9 +5,14 @@ import { useI18n } from "../lib/i18n";
 
 // Краткая сводка хода: выбранные сценарии, а если решения нет — действие политики,
 // чтобы по истории было видно, где робот переспрашивал или отдавал разговор оператору.
-function summary(trace: TurnTrace, actionLabel: string): string {
+// Идентификаторы набраны моноширинным шрифтом, а подпись действия — обычным: это текст, а не код.
+function Summary({ trace, actionLabel }: { trace: TurnTrace; actionLabel: string }) {
   const ids = trace.decision?.scenarios.map((s) => s.scenario_id) ?? [];
-  return ids.length > 0 ? ids.join(" + ") : actionLabel;
+  return ids.length > 0 ? (
+    <span className="history__ids">{ids.join(" + ")}</span>
+  ) : (
+    <span className="history__action">{actionLabel}</span>
+  );
 }
 
 interface TurnHistoryProps {
@@ -34,7 +39,7 @@ export function TurnHistory({ traces, selected, onSelect }: TurnHistoryProps) {
             onClick={() => onSelect(index)}
           >
             <span className="history__turn">{trace.turn}</span>
-            <span className="history__ids">{summary(trace, t(`action.${trace.action.kind}`))}</span>
+            <Summary trace={trace} actionLabel={t(`action.${trace.action.kind}`)} />
             <span className="history__text">{trace.transcript}</span>
           </button>
         </li>
