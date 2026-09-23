@@ -1,11 +1,18 @@
 # Voice Router — гибридный голосовой AI-робот с LLM-слоем выбора сценария
 
-Команда IITU+SPARTANS · HackAlem AI 2026 · трек 09 «Коммуникации» · владелец задачи: Halyk Bank.
+![HackAlem AI 2026](https://img.shields.io/badge/HackAlem_AI-2026-00805F) ![Трек 09](https://img.shields.io/badge/%D1%82%D1%80%D0%B5%D0%BA-%D0%9A%D0%BE%D0%BC%D0%BC%D1%83%D0%BD%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D0%B8-059E77) ![TypeScript 7](https://img.shields.io/badge/TypeScript-7-071222) ![Next.js 16](https://img.shields.io/badge/Next.js-16-071222) ![PostgreSQL 16](https://img.shields.io/badge/PostgreSQL-16-071222) ![TDD](https://img.shields.io/badge/%D1%80%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B0-TDD-00805F)
 
-> **Статус.** Готовы архитектура, рабочее пространство pnpm и первый контракт ядра — схема ответа
-> LLM-маршрутизатора с тестами (`pnpm verify`). Остальные модули добавляются по одному, каждый начинается
-> с теста (TDD). Разделы 4–8 описывают целевой порядок запуска всей системы и обновляются по мере
-> появления кода; уже работающие команды отмечены явно. План работ — в [issues](../../issues) (#2–#11).
+Хакатон HackAlem AI 2026 ([Astana Hub](https://astanahub.com)) · трек 09 «Коммуникации» · кейс предоставлен
+[Halyk Bank](https://halykbank.kz) · команда IITU+SPARTANS, Международный университет информационных технологий.
+
+[Архитектура и история решений](ARCHITECTURE.md) · [Правила работы](AGENTS.md) · [Навыки для агентов](.agents/skills/) ·
+[Задачи](../../issues)
+
+> **Статус.** Работает сквозной сценарий: реплика голосом или текстом в веб-интерфейсе -> выбор сценария ->
+> политика решений -> ответ робота на русском или казахском -> панель трассировки для супервизора; каждый ход пишется
+> в журнал PostgreSQL. Запуск одной командой: `docker compose up --build`. Проверка кода: `pnpm verify`.
+> Без ключа модели решение принимает демо-режим; с `OPENAI_API_KEY` — LLM-маршрутизатор; с `ROUTER_URL` — сервис
+> выбора сценария на FastAPI. Развитие — в [задачах](../../issues).
 
 ---
 
@@ -159,60 +166,37 @@ classDiagram
     DialogState "1" o-- "0..1" Scenario : activeScenario
 ```
 
-### 2.5. Схема базы данных (целевая, создаётся нумерованными миграциями)
+### 2.5. Схема базы данных (миграция `db/migrations/001_turn_journal.sql`)
+
+Журнал ходов диалога для панели супервизора. Выбранный сценарий и уверенность вынесены в столбцы — по ним
+строятся статистика и фильтр; полное решение и задержка хранятся в JSONB для показа.
 
 ```mermaid
 erDiagram
-    SCENARIOS ||--o{ ROUTE_DECISIONS : selected_in
     DIALOGS ||--|{ TURNS : contains
-    TURNS ||--o{ ROUTE_DECISIONS : produces
-    TURNS ||--|| TURN_LATENCY : measured_by
-    CLIENTS ||--o{ DIALOGS : identified_in
-    SCENARIOS {
-        text scenario_id PK
-        text domain
-        text category
-        text priority
-        boolean fast_path_eligible
-        boolean requires_confirmation
-        jsonb definition
-    }
-    CLIENTS {
-        text client_id PK
-        text phone UK
-        text full_name
-    }
     DIALOGS {
         uuid dialog_id PK
-        text client_id FK
-        text language
         timestamptz started_at
     }
     TURNS {
-        bigint turn_id PK
+        bigserial turn_id PK
         uuid dialog_id FK
         int turn_no
-        text role
-        text text
+        timestamptz created_at
+        text transcript
         text language
-    }
-    ROUTE_DECISIONS {
-        bigint turn_id FK
-        text scenario_id FK
-        int rank
-        numeric confidence
-        text reason
-    }
-    TURN_LATENCY {
-        bigint turn_id PK
-        int stt_ms
-        int triage_ms
-        int router_ms
-        int response_ms
-        int tts_first_audio_ms
-        int total_ms
+        text source
+        text action_kind
+        text top_scenario
+        numeric top_confidence
+        jsonb decision
+        text reply
+        text error
+        jsonb latency_ms
     }
 ```
+
+Индексы: `turns (created_at DESC)` — лента последних ходов; `turns (top_scenario)` — статистика по сценарию.
 
 ## 3. Используемые технологии
 
@@ -300,6 +284,16 @@ PostgreSQL 16. Ключ OpenAI API нужен только для живого �
 1. `pnpm verify` — установка по lock-файлу, проверка типов, модульные тесты.
 2. `docker compose up --build`, затем `curl http://localhost:3000/api/health` — ожидается
    `{"ok":true,"db":true,...}`: приложение запущено, база доступна, миграции применены.
+3. Ход диалога и журнал:
+
+   ```bash
+   curl -X POST localhost:3000/api/turn -H "Content-Type: application/json"      -d '{"utterance":"Когда будет выплата по моему заявлению?","state":{"lowConfidenceStreak":0,"history":[]}}'
+   # ответ робота из фраз набора, trace (сценарий, действие, источник, задержка), state с dialogId
+   curl "localhost:3000/api/turns?limit=5"
+   # последние ходы из журнала PostgreSQL
+   ```
+
+   Без `OPENAI_API_KEY` и `ROUTER_URL` решение принимает демо-режим (помечен в `trace.source`).
 
 Целевой сценарий (по мере готовности модулей):
 
@@ -416,6 +410,8 @@ pnpm stt:eval              # нужен OPENAI_API_KEY; отчёт в test-resul
 | `data/kit/` | стартовый набор организаторов | Жандаулет |
 | `tests/e2e/` | сквозные тесты Playwright | Батырхан |
 | `docs/` | описание данных, контракты API | команда |
+| `.agents/skills/` | навыки для AI-агентов по этому репозиторию | команда |
+| `ARCHITECTURE.md` | архитектурные решения и их история (ADR) | команда |
 
 ## Команда
 
