@@ -11,7 +11,7 @@ from app.config import settings
 from app.dataset import SYSTEM_INTENTS, load
 from app.router.prompt import dynamic_input, static_prompt
 
-DEFAULT_ROUTER_MODEL = "gpt-4.1-mini"
+DEFAULT_ROUTER_MODEL = "gpt-5.4-mini"  # выбор по docs/ROUTER_LOG.md
 
 _ds = load()
 # Enum из данных: модель физически не может вернуть несуществующий ID сценария или слота
@@ -91,10 +91,12 @@ async def route(utterance: str, state: DialogState | None = None, *, model: str 
     model = model or settings.router_model or DEFAULT_ROUTER_MODEL
     kwargs = {}
     if _is_reasoning(model):
-        if settings.router_reasoning_effort:
-            kwargs["reasoning"] = {"effort": settings.router_reasoning_effort}
+        kwargs["reasoning"] = {"effort": settings.router_reasoning_effort or "none"}
     else:
         kwargs["temperature"] = 0
+
+    if settings.router_service_tier:
+        kwargs["service_tier"] = settings.router_service_tier
 
     started = time.perf_counter()
     resp = await _client().responses.parse(
@@ -120,6 +122,9 @@ async def route(utterance: str, state: DialogState | None = None, *, model: str 
         if p.scenario_id.value not in seen:
             seen.add(p.scenario_id.value)
             picks.append(ScenarioPick(scenario_id=p.scenario_id.value, confidence=p.confidence, reason=p.reason))
+    # инвариант контракта: системный интент не соседствует с бизнес-сценарием
+    if any(p.scenario_id not in SYSTEM_INTENTS for p in picks):
+        picks = [p for p in picks if p.scenario_id not in SYSTEM_INTENTS]
     if not picks:
         picks = [ScenarioPick(scenario_id="SYS_UNCLEAR", confidence=0.0, reason="router returned no scenarios")]
 
