@@ -1,0 +1,20 @@
+{
+  "name": "voice-router",
+  "private": true,
+  "description": "Voice Router: гибридный голосовой AI-робот с LLM-слоем выбора сценария (HackAlem AI 2026, кейс Halyk Bank)",
+  "type": "module",
+  "packageManager": "pnpm@12.3.4",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.2",
+    "typescript": "7.0.2",
+    "vitest": "5.0.1"
+  }
+}

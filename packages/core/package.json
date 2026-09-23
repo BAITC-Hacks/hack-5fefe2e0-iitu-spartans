@@ -1,0 +1,12 @@
+{
+  "name": "@voice-router/core",
+  "private": true,
+  "description": "Ядро Voice Router: контракты и модули triage, router, policy, executor, trace",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "zod": "4.6.5"
+  }
+}
