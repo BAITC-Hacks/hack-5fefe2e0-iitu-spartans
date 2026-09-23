@@ -26,6 +26,12 @@ function labelsFromReadme(file: string): Record<string, string> {
   return labels;
 }
 
+/** Название сценария для панели — без кавычек и с заглавной буквы; кавычки нужны только внутри фразы робота. */
+export function scenarioDisplayName(labels: ScenarioLabels, id: string): string {
+  const name = labels.ru[id]?.replace(/^«|»$/g, "");
+  return name ? name.charAt(0).toUpperCase() + name.slice(1) : id;
+}
+
 let cached: { catalog: Catalog; labels: ScenarioLabels; priorityOf: (id: string) => Priority } | null = null;
 
 export function loadCatalog() {
