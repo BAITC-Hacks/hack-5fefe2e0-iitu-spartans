@@ -2,6 +2,7 @@
 
 import type { Language } from "@voice-router/core";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { MIC_CONSTRAINTS, pickRecorderMime } from "./audio-recording";
 import type { CallPhase } from "./CallScreen";
 
 /**
@@ -20,6 +21,8 @@ export interface CallReply {
 interface Options {
   onUtterance: (text: string, sttMs: number) => Promise<CallReply | null>;
   onError: (code: string) => void;
+  /** Первый звук ответа: миллисекунды от готового текста ответа до начала воспроизведения (трассировка). */
+  onFirstAudio?: (ms: number) => void;
 }
 
 // Порог речи считается от шума зала, измеренного в начале звонка: константа не работает на хакатоне и в тихом офисе.
@@ -44,13 +47,6 @@ function rms(buffer: Float32Array): number {
   return Math.sqrt(sum / buffer.length);
 }
 
-function pickMime(): string {
-  for (const type of ["audio/webm;codecs=opus", "audio/webm", "audio/ogg;codecs=opus", "audio/mp4"]) {
-    if (MediaRecorder.isTypeSupported(type)) return type;
-  }
-  return "";
-}
-
 interface Recording {
   recorder: MediaRecorder;
   chunks: Blob[];
@@ -68,7 +64,7 @@ class CallEngine {
   private analyser: AnalyserNode;
   private buffer: Float32Array<ArrayBuffer>;
   private timer: ReturnType<typeof setInterval>;
-  private mime = pickMime();
+  private mime = pickRecorderMime();
   private mode: "calibrating" | "listening" | "busy" | "speaking" = "calibrating";
   private noise: number[] = [];
   private threshold = MIN_THRESHOLD;
@@ -203,8 +199,12 @@ class CallEngine {
     this.discardRecording();
     this.startRecording();
     const lang = reply.language === "kk" ? "kk" : "ru";
+    const requested = performance.now();
     const audio = new Audio(`/api/tts?lang=${lang}&text=${encodeURIComponent(reply.text)}`);
     this.audio = audio;
+    audio.addEventListener("playing", () => this.cb.handlers().onFirstAudio?.(Math.round(performance.now() - requested)), {
+      once: true,
+    });
     const done = () => {
       if (this.audio !== audio || this.closed) return;
       this.audio = null;
@@ -257,16 +257,16 @@ class CallEngine {
   }
 }
 
-export function useVoiceCall({ onUtterance, onError }: Options) {
+export function useVoiceCall({ onUtterance, onError, onFirstAudio }: Options) {
   const [active, setActive] = useState(false);
   const [phase, setPhase] = useState<CallPhase>("connecting");
   const [level, setLevel] = useState(0);
   const [startedAt, setStartedAt] = useState(0);
   const engineRef = useRef<CallEngine | null>(null);
   // Обработчики в ref: звонок живёт дольше перерисовки и должен звать свежие, с актуальным состоянием диалога.
-  const handlersRef = useRef<Options>({ onUtterance, onError });
+  const handlersRef = useRef<Options>({ onUtterance, onError, ...(onFirstAudio ? { onFirstAudio } : {}) });
   useEffect(() => {
-    handlersRef.current = { onUtterance, onError };
+    handlersRef.current = { onUtterance, onError, ...(onFirstAudio ? { onFirstAudio } : {}) };
   });
 
   const hangUp = useCallback(() => {
@@ -282,9 +282,7 @@ export function useVoiceCall({ onUtterance, onError }: Options) {
     setStartedAt(Date.now());
     let stream: MediaStream;
     try {
-      stream = await navigator.mediaDevices.getUserMedia({
-        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
-      });
+      stream = await navigator.mediaDevices.getUserMedia(MIC_CONSTRAINTS);
     } catch {
       setActive(false);
       handlersRef.current.onError("mic_denied");

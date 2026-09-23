@@ -7,6 +7,7 @@ import { LatencyTable } from "./LatencyTable";
 import { PolicyActionView } from "./PolicyActionView";
 import { ScenarioCard } from "./ScenarioCard";
 import { SlotsTable } from "./SlotsTable";
+import type { TurnVoice } from "./types";
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -21,7 +22,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
  * Трассировка одного хода для супервизора (ТЗ: сценарий, обоснование, альтернативы, время по этапам).
  * decision бывает null — ошибка маршрутизатора или демо без модели; действие и задержки есть всегда.
  */
-export function TracePanel({ trace }: { trace: TurnTrace }) {
+export function TracePanel({ trace, voice }: { trace: TurnTrace; voice?: TurnVoice }) {
   const { t } = useI18n();
   const { decision, scenarioNames } = trace;
 
@@ -102,7 +103,7 @@ export function TracePanel({ trace }: { trace: TurnTrace }) {
       )}
 
       <Section title={t("trace.latency")}>
-        <LatencyTable latency={trace.latencyMs} />
+        <LatencyTable latency={trace.latencyMs} {...(voice ? { voice } : {})} />
       </Section>
     </div>
   );

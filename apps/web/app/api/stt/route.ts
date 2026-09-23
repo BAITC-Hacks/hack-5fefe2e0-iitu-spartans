@@ -3,7 +3,8 @@ import { transcribe, transcriptionHints } from "../../../lib/server/transcribe";
 
 /**
  * Распознавание речи на сервере. GET сообщает интерфейсу, доступно ли оно (есть ли ключ модели): без ключа
- * интерфейс остаётся на распознавании браузера (Положение §5.6.6). POST принимает запись реплики в поле audio.
+ * интерфейс остаётся на распознавании браузера (Положение §5.6.6). POST принимает запись реплики в поле audio и
+ * возвращает { text, language?, latency_ms }: language — ru, kk или mixed, если модель уверена в языке.
  */
 export const dynamic = "force-dynamic";
 
@@ -38,5 +39,10 @@ export async function POST(request: Request) {
     apiKey: process.env.OPENAI_API_KEY ?? "",
     now: Date.now,
   });
-  return result.ok ? Response.json({ text: result.text, ms: result.ms }) : Response.json({ error: result.error }, { status: 502 });
+  if (!result.ok) return Response.json({ error: result.error }, { status: 502 });
+  return Response.json({
+    text: result.text,
+    ...(result.language ? { language: result.language } : {}),
+    latency_ms: result.ms,
+  });
 }

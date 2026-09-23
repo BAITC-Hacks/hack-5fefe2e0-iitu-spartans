@@ -47,6 +47,23 @@ describe("transcribe — серверное распознавание речи"
     expect(await transcribe(audio, "speech.webm", HINTS, deps)).toEqual({ ok: true, text: "Өтінішім қандай күйде?", ms: 300 });
   });
 
+  it("язык реплики — из поля languages ответа gpt-transcribe: один язык или mixed для обоих", async () => {
+    const cases: Array<[unknown, string | undefined]> = [
+      [[{ code: "kk" }], "kk"],
+      [[{ code: "ru" }], "ru"],
+      [[{ code: "kk" }, { code: "ru" }], "mixed"],
+      // Пустой список — модель не уверена в языке; неизвестный код — не наш случай. Язык тогда определит маршрутизатор.
+      [[], undefined],
+      [[{ code: "en" }], undefined],
+      [undefined, undefined],
+    ];
+    for (const [languages, expected] of cases) {
+      const { deps } = fakeFetch(() => Response.json({ text: "КАСКО бойынша өтініш", languages }));
+      const result = await transcribe(audio, "speech.webm", HINTS, deps);
+      expect(result.ok && result.language, JSON.stringify(languages)).toBe(expected ?? undefined);
+    }
+  });
+
   it("ошибку API возвращает кодом, а не исключением", async () => {
     const { deps } = fakeFetch(() => new Response("rate limit", { status: 429 }));
     expect(await transcribe(audio, "speech.webm", HINTS, deps)).toEqual({ ok: false, error: "http_429" });

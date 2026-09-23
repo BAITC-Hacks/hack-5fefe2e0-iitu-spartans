@@ -37,7 +37,8 @@ export function useSpeechSynthesis() {
   }, []);
 
   const speak = useCallback(
-    (text: string, bcp47: string) => {
+    /** onStart — первый звук: по нему в трассировке считается задержка озвучки. */
+    (text: string, bcp47: string, onStart?: () => void) => {
       if (!("speechSynthesis" in window) || !text.trim()) return;
       const synth = window.speechSynthesis;
       synth.cancel();
@@ -49,7 +50,10 @@ export function useSpeechSynthesis() {
       } else {
         utterance.lang = bcp47;
       }
-      utterance.onstart = () => setSpeaking(true);
+      utterance.onstart = () => {
+        setSpeaking(true);
+        onStart?.();
+      };
       utterance.onend = () => setSpeaking(false);
       utterance.onerror = () => setSpeaking(false);
       utteranceRef.current = utterance;

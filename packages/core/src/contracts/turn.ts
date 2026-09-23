@@ -42,6 +42,11 @@ export interface TurnLatency {
   router: number;
   response: number;
   total: number;
+  /**
+   * От готового текста ответа до первого звука озвучки. Измеряется в браузере после ответа сервера, поэтому
+   * в журнал ходов не попадает; нет у текстовых ответов без озвучки.
+   */
+  ttsFirstAudio?: number;
 }
 
 export interface TurnTrace {

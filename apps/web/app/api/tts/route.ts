@@ -15,12 +15,12 @@ const INSTRUCTIONS: Record<string, string> = {
   ru: "Ты вежливый оператор контакт-центра страховой компании. Говори по-русски чётко, тепло и без спешки.",
 };
 
-export async function GET(request: Request) {
+/** Озвучка текста потоком; ошибки — JSON с кодом, как у остальных маршрутов API. */
+async function synthesize(rawText: unknown, rawLang: unknown): Promise<Response> {
   if (!hasModelKey()) return Response.json({ error: "no_model_key" }, { status: 503 });
-  const params = new URL(request.url).searchParams;
-  const text = (params.get("text") ?? "").trim().slice(0, MAX_TEXT);
+  const text = (typeof rawText === "string" ? rawText : "").trim().slice(0, MAX_TEXT);
   if (!text) return Response.json({ error: "no_text" }, { status: 400 });
-  const language = params.get("lang") === "kk" ? "kk" : "ru";
+  const language = rawLang === "kk" ? "kk" : "ru";
 
   const upstream = await fetch(ENDPOINT, {
     method: "POST",
@@ -38,4 +38,16 @@ export async function GET(request: Request) {
   if (!upstream?.ok || !upstream.body) return Response.json({ error: `tts_${upstream?.status ?? "network"}` }, { status: 502 });
 
   return new Response(upstream.body, { headers: { "Content-Type": "audio/mpeg", "Cache-Control": "no-store" } });
+}
+
+/** Для <audio src>: элемент умеет только GET и сразу играет поток. */
+export async function GET(request: Request) {
+  const params = new URL(request.url).searchParams;
+  return synthesize(params.get("text"), params.get("lang"));
+}
+
+/** Для программных клиентов: тело JSON { text, lang }. */
+export async function POST(request: Request) {
+  const body = (await request.json().catch(() => null)) as { text?: unknown; lang?: unknown } | null;
+  return synthesize(body?.text, body?.lang);
 }

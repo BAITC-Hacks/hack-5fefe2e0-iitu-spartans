@@ -1,5 +1,13 @@
 import type { MessageKey } from "../lib/i18n";
 
+/** Какой путь сработал для распознавания или озвучки: сервер (OpenAI) или запасной — браузер. */
+export type VoicePath = "server" | "browser";
+
+export interface TurnVoice {
+  stt?: VoicePath;
+  tts?: VoicePath;
+}
+
 /** Состояние робота для строки статуса и кнопки микрофона. */
 export type VoiceStatus = "idle" | "listening" | "thinking" | "speaking";
 

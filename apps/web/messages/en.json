@@ -146,5 +146,12 @@
   "settings.voice": "Voice",
   "settings.engines": "Scenario engines",
   "settings.ready": "configured",
-  "mic.hint": "Press and speak Russian or Kazakh; language and voice output are in settings."
+  "mic.hint": "Press and speak Russian or Kazakh; language and voice output are in settings.",
+
+  "latency.ttsFirstAudio": "First audio of reply",
+  "voice.path.server": "server",
+  "voice.path.browser": "browser",
+  "voice.channel": "Recognition: {stt} · Voice: {tts}",
+  "mic.sttFallback": "Server speech recognition is unavailable ({code}) — the browser listens from now on.",
+  "mic.recording": "Recording: release the button or press it again"
 }

@@ -19,7 +19,23 @@ const DEFAULT_MODEL: SttModel = "gpt-transcribe";
 /** Дольше ждать распознавания нет смысла: клиент уже слышит паузу, ход лучше повторить. */
 const TIMEOUT_MS = 10_000;
 
-export type TranscribeResult = { ok: true; text: string; ms: number } | { ok: false; error: string };
+export type SpokenLanguage = "ru" | "kk" | "mixed";
+
+export type TranscribeResult =
+  | { ok: true; text: string; ms: number; language?: SpokenLanguage }
+  | { ok: false; error: string };
+
+/**
+ * gpt-transcribe возвращает найденные языки списком (пустым, если не уверен). Оба наших языка — смешанная речь;
+ * чужой или пустой список — язык не сообщаем, его определит маршрутизатор по тексту.
+ */
+function spokenLanguage(languages: unknown): SpokenLanguage | undefined {
+  if (!Array.isArray(languages)) return undefined;
+  const codes = new Set(languages.map((l: { code?: unknown }) => l?.code).filter((c) => c === "ru" || c === "kk"));
+  if (codes.size === 2) return "mixed";
+  const [only] = codes;
+  return only === "ru" || only === "kk" ? only : undefined;
+}
 
 export interface TranscribeDeps {
   fetch: typeof fetch;
@@ -52,11 +68,12 @@ export async function transcribe(
   }
   if (!response.ok) return { ok: false, error: `http_${response.status}` };
 
-  const body = (await response.json()) as { text?: string };
+  const body = (await response.json()) as { text?: string; languages?: unknown };
   const text = body.text?.trim() ?? "";
   // Пустая расшифровка — это тишина или шум зала; отвечать на неё нельзя, клиент ничего не просил.
   if (!text) return { ok: false, error: "empty" };
-  return { ok: true, text, ms: deps.now() - started };
+  const language = spokenLanguage(body.languages);
+  return { ok: true, text, ms: deps.now() - started, ...(language ? { language } : {}) };
 }
 
 // Словарь терминов собран из данных набора скриптом glossary-build и лежит рядом с модулем STT ядра.

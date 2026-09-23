@@ -14,7 +14,9 @@ import { SupervisorStats } from "./SupervisorStats";
 import { TracePanel } from "./TracePanel";
 import { TurnHistory } from "./TurnHistory";
 import { postTurn, type TurnFailure } from "./turn-client";
-import type { ChatMessage, VoiceStatus } from "./types";
+import type { ChatMessage, TurnVoice, VoicePath, VoiceStatus } from "./types";
+import { ttsUrl } from "../lib/voice/server-voice";
+import { usePushToTalk } from "./use-push-to-talk";
 import { useSpeechRecognition, type RecognitionLang } from "./use-speech-recognition";
 import { useSpeechSynthesis } from "./use-speech-synthesis";
 import { useVoiceCall, type CallReply } from "./use-voice-call";
@@ -57,6 +59,15 @@ export function VoiceRouterApp() {
   // null — ещё не спросили сервер. Режим звонка доступен, когда на сервере есть ключ модели (распознавание и голос);
   // без ключа остаются голос браузера и текст (Положение §5.6.6).
   const [serverVoice, setServerVoice] = useState<boolean | null>(null);
+  // Серверное распознавание кнопки микрофона отказало (сеть, 5xx, нет ключа) — до нового разговора слушает браузер.
+  const [sttServerFailed, setSttServerFailed] = useState(false);
+  // Какой путь распознавания и озвучки сработал в каждом ходе (по индексу трассировки) — для панели супервизора.
+  const [voiceByTurn, setVoiceByTurn] = useState<Record<number, TurnVoice>>({});
+  const [lastTtsPath, setLastTtsPath] = useState<VoicePath | null>(null);
+  const [serverSpeaking, setServerSpeaking] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  // Индекс следующей трассировки: колбэки озвучки приходят позже перерисовки и должны найти свой ход.
+  const traceCountRef = useRef(0);
 
   useEffect(() => {
     fetch("/api/stt")
@@ -86,8 +97,83 @@ export function VoiceRouterApp() {
     setMessages((current) => [...current, message]);
   }, []);
 
+  /** Первый звук ответа хода index: задержка и путь озвучки уходят в трассировку этого хода. */
+  const recordFirstAudio = useCallback((index: number, ms: number, path: VoicePath) => {
+    setTraces((current) =>
+      current.map((trace, i) => (i === index ? { ...trace, latencyMs: { ...trace.latencyMs, ttsFirstAudio: ms } } : trace)),
+    );
+    setVoiceByTurn((current) => ({ ...current, [index]: { ...current[index], tts: path } }));
+    setLastTtsPath(path);
+  }, []);
+
+  const stopServerAudio = useCallback(() => {
+    const audio = audioRef.current;
+    audioRef.current = null;
+    setServerSpeaking(false);
+    if (!audio) return;
+    audio.onended = null;
+    audio.onerror = null;
+    audio.pause();
+    audio.removeAttribute("src");
+    audio.load();
+  }, []);
+
+  const stopSpeaking = useCallback(() => {
+    synthesis.cancel();
+    stopServerAudio();
+  }, [synthesis.cancel, stopServerAudio]);
+
+  /**
+   * Озвучка ответа: голос сервера (казахский есть), при сбое до первого звука — голос браузера (Положение §5.6.6).
+   * Время считается от готового текста ответа до первого звука — это «tts_first_audio» трассировки.
+   */
+  const speakReply = useCallback(
+    (text: string, language: Language, index: number) => {
+      const started = performance.now();
+      const viaBrowser = () =>
+        synthesis.speak(text, speechLangFor(language, recognitionLang), () =>
+          recordFirstAudio(index, Math.round(performance.now() - started), "browser"),
+        );
+      if (!serverVoice) {
+        viaBrowser();
+        return;
+      }
+      stopServerAudio();
+      const audio = new Audio(ttsUrl(text, language));
+      audioRef.current = audio;
+      let played = false;
+      audio.addEventListener(
+        "playing",
+        () => {
+          played = true;
+          setServerSpeaking(true);
+          recordFirstAudio(index, Math.round(performance.now() - started), "server");
+        },
+        { once: true },
+      );
+      audio.onended = () => {
+        if (audioRef.current !== audio) return;
+        audioRef.current = null;
+        setServerSpeaking(false);
+      };
+      const fail = () => {
+        // Остановили сами (клиент заговорил или новый разговор) — это не сбой озвучки.
+        if (audioRef.current !== audio) return;
+        audioRef.current = null;
+        setServerSpeaking(false);
+        if (!played) viaBrowser();
+      };
+      audio.onerror = fail;
+      audio.play().catch(fail);
+    },
+    [serverVoice, synthesis.speak, recognitionLang, recordFirstAudio, stopServerAudio],
+  );
+
   const sendUtterance = useCallback(
-    async (utterance: string, sttMs?: number, speak = true): Promise<CallReply | null> => {
+    async (
+      utterance: string,
+      { sttMs, stt, speak = true }: { sttMs?: number; stt?: VoicePath; speak?: boolean } = {},
+    ): Promise<CallReply | null> => {
       const text = utterance.trim();
       if (!text || pendingRef.current) return null;
       pendingRef.current = true;
@@ -101,11 +187,13 @@ export function VoiceRouterApp() {
         const { reply, trace, state } = result.data;
         turnStatesRef.current.push(dialogState);
         setDialogState(state);
+        const index = traceCountRef.current++;
         setTraces((current) => [...current, trace]);
+        if (stt) setVoiceByTurn((current) => ({ ...current, [index]: { stt } }));
         setSelectedTurn(null);
         pushMessage({ id: nextId.current++, role: "bot", text: reply.text });
         answer = { text: reply.text, language: reply.language };
-        if (speak && speakReplies) synthesis.speak(reply.text, speechLangFor(reply.language, recognitionLang));
+        if (speak && speakReplies) speakReply(reply.text, reply.language, index);
       } else {
         pushMessage(failureMessage(nextId.current++, result.failure));
       }
@@ -113,12 +201,13 @@ export function VoiceRouterApp() {
       setPending(false);
       return answer;
     },
-    [dialogState, pushMessage, speakReplies, synthesis.speak, recognitionLang],
+    [dialogState, pushMessage, speakReplies, speakReply],
   );
 
   // В звонке ответ озвучивает голос сервера, поэтому голос браузера здесь не включается.
   const call = useVoiceCall({
-    onUtterance: (text, sttMs) => sendUtterance(text, sttMs, false),
+    onUtterance: (text, sttMs) => sendUtterance(text, { sttMs, stt: "server", speak: false }),
+    onFirstAudio: (ms) => recordFirstAudio(traceCountRef.current - 1, ms, "server"),
     onError: (code) =>
       pushMessage(
         code === "mic_denied"
@@ -128,34 +217,64 @@ export function VoiceRouterApp() {
   });
 
   const startCall = useCallback(() => {
-    synthesis.cancel();
+    stopSpeaking();
     void call.start();
-  }, [synthesis.cancel, call.start]);
+  }, [stopSpeaking, call.start]);
 
   const recognition = useSpeechRecognition({
     lang: recognitionLang,
-    onFinal: (transcript, sttMs) => void sendUtterance(transcript, sttMs),
+    onFinal: (transcript, sttMs) => void sendUtterance(transcript, { sttMs, stt: "browser" }),
     onError: (code) => pushMessage({ id: nextId.current++, role: "error", key: "mic.error", vars: { code } }),
   });
 
+  const pushToTalk = usePushToTalk({
+    onResult: (outcome, sttMs) => {
+      if (outcome.ok) {
+        void sendUtterance(outcome.text, { sttMs, stt: "server" });
+        return;
+      }
+      if (outcome.fallback) {
+        setSttServerFailed(true);
+        pushMessage({ id: nextId.current++, role: "error", key: "mic.sttFallback", vars: { code: outcome.error } });
+      } else {
+        pushMessage({ id: nextId.current++, role: "error", key: "mic.sttError", vars: { code: outcome.error } });
+      }
+    },
+    onMicDenied: () => pushMessage({ id: nextId.current++, role: "error", key: "call.micDenied" }),
+  });
+
+  // Кнопка микрофона: серверное распознавание при ключе модели, браузерное — без ключа или после отказа сервера.
+  const sttPath: VoicePath | null = serverVoice === null ? null : serverVoice && !sttServerFailed ? "server" : "browser";
+  const pttActive = pushToTalk.phase === "starting" || pushToTalk.phase === "recording";
+
   const startListening = useCallback(() => {
     // Робот замолкает, когда клиент начинает говорить: иначе микрофон запишет его собственный голос.
-    synthesis.cancel();
-    recognition.start();
-  }, [synthesis.cancel, recognition.start]);
+    stopSpeaking();
+    if (sttPath === "server") void pushToTalk.start();
+    else recognition.start();
+  }, [stopSpeaking, sttPath, pushToTalk.start, recognition.start]);
+
+  const stopListening = useCallback(() => {
+    if (sttPath === "server") pushToTalk.stop();
+    else recognition.stop();
+  }, [sttPath, pushToTalk.stop, recognition.stop]);
 
   const resetConversation = useCallback(() => {
-    synthesis.cancel();
+    stopSpeaking();
     recognition.stop();
+    pushToTalk.cancel();
     call.hangUp();
     setDialogState(INITIAL_CLIENT_STATE);
     setMessages([]);
     setTraces([]);
+    setVoiceByTurn({});
+    traceCountRef.current = 0;
+    setSttServerFailed(false);
     setSelectedTurn(null);
     turnStatesRef.current = [];
     setCompare({ status: "idle" });
     setCompareIndex(null);
-  }, [synthesis.cancel, recognition.stop, call.hangUp]);
+  }, [stopSpeaking, recognition.stop, pushToTalk.cancel, call.hangUp]);
 
   const runCompare = useCallback(
     async (index: number) => {
@@ -174,11 +293,12 @@ export function VoiceRouterApp() {
   );
 
   // Приоритет статусов: слушание важнее ожидания ответа, ожидание важнее озвучивания.
-  const status: VoiceStatus = recognition.listening
+  const listening = recognition.listening || pttActive;
+  const status: VoiceStatus = listening
     ? "listening"
-    : pending
+    : pending || pushToTalk.phase === "transcribing"
       ? "thinking"
-      : synthesis.speaking
+      : synthesis.speaking || serverSpeaking
         ? "speaking"
         : "idle";
   const shownIndex = selectedTurn ?? traces.length - 1;
@@ -199,7 +319,7 @@ export function VoiceRouterApp() {
               {t("conv.title")}
             </h2>
             <div className="card__actions">
-              {serverVoice && !call.active ? <CallStartButton onStart={startCall} disabled={pending || recognition.listening} /> : null}
+              {serverVoice && !call.active ? <CallStartButton onStart={startCall} disabled={pending || listening} /> : null}
               <button type="button" className="button button--ghost button--small" onClick={() => setSettingsOpen(true)}>
                 {t("settings.open")}
               </button>
@@ -230,11 +350,22 @@ export function VoiceRouterApp() {
             <>
               <VoiceBar
                 status={status}
-                recognitionSupported={recognition.supported}
-                listening={recognition.listening}
-                busy={pending}
+                micAvailable={sttPath === null ? null : sttPath === "server" ? pushToTalk.supported : recognition.supported}
+                listening={listening}
+                busy={pending || pushToTalk.phase === "transcribing"}
+                {...(pushToTalk.phase === "recording"
+                  ? { hint: "mic.recording" as const }
+                  : pushToTalk.phase === "transcribing"
+                    ? { hint: "mic.transcribing" as const }
+                    : {})}
+                channel={{
+                  ...(sttPath ? { stt: sttPath } : {}),
+                  ...(speakReplies && serverVoice !== null
+                    ? { tts: lastTtsPath ?? (serverVoice ? "server" : "browser") }
+                    : {}),
+                }}
                 onStart={startListening}
-                onStop={recognition.stop}
+                onStop={stopListening}
               />
               <MessageList messages={messages} />
               <Composer disabled={pending} onSend={(text) => void sendUtterance(text)} />
@@ -260,7 +391,11 @@ export function VoiceRouterApp() {
               ) : null}
             </div>
           </div>
-          {shownTrace ? <TracePanel trace={shownTrace} /> : <p className="muted">{t("trace.empty")}</p>}
+          {shownTrace ? (
+            <TracePanel trace={shownTrace} {...(voiceByTurn[shownIndex] ? { voice: voiceByTurn[shownIndex] } : {})} />
+          ) : (
+            <p className="muted">{t("trace.empty")}</p>
+          )}
           <section className="section">
             <h3 className="section__title">{t("history.title")}</h3>
             <TurnHistory traces={traces} selected={shownIndex} onSelect={setSelectedTurn} />
@@ -277,7 +412,7 @@ export function VoiceRouterApp() {
         speakReplies={speakReplies}
         onSpeakRepliesChange={(value) => {
           setSpeakReplies(value);
-          if (!value) synthesis.cancel();
+          if (!value) stopSpeaking();
         }}
         synthesisSupported={synthesis.supported}
         showNoKazakhVoice={
