@@ -71,6 +71,12 @@ describe("buildRouterMessages — промпт LLM-маршрутизатора"
     expect(withState.user).toContain("Сәлеметсіз бе");
   });
 
+  it("требует обоснование на русском со ссылкой на слова клиента и правило каталога", () => {
+    // Панель супервизора русскоязычная: обоснование на английском модель писала примерно в половине ходов.
+    expect(system).toMatch(/reason:[^\n]*in Russian/);
+    expect(system).toMatch(/reason:[^\n]*Not this if/);
+  });
+
   it("детерминирован: одинаковый вход даёт одинаковый промпт", () => {
     expect(buildRouterMessages(CATALOG_FIXTURE, context, "x")).toEqual(buildRouterMessages(CATALOG_FIXTURE, context, "x"));
   });
