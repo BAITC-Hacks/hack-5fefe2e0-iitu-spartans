@@ -18,13 +18,17 @@ export function replyLanguage(language: Language): ReplyLanguage {
   return language === "kk" ? "kk" : "ru";
 }
 
-const FALLBACK: Record<ReplyLanguage, { handoff: string; continue: string; nextTopic: string; other: string; unknown: string }> = {
+const FALLBACK: Record<
+  ReplyLanguage,
+  { handoff: string; continue: string; nextTopic: string; other: string; unknown: string; openQuestion: string }
+> = {
   ru: {
     handoff: "Соединяю с оператором и передаю суть вопроса — повторять не придётся.",
     continue: "Спасибо, продолжаем.",
     nextTopic: "Затем вернёмся к вопросу: {label}.",
     other: "другое",
     unknown: "Не расслышал, повторите, пожалуйста.",
+    openQuestion: "Слушаю вас. Подскажите, пожалуйста, с каким вопросом вы обращаетесь?",
   },
   kk: {
     handoff: "Операторға қосамын, сұрағыңыздың мәнін жеткіземін — қайталаудың қажеті жоқ.",
@@ -32,10 +36,13 @@ const FALLBACK: Record<ReplyLanguage, { handoff: string; continue: string; nextT
     nextTopic: "Содан кейін келесі сұраққа ораламыз: {label}.",
     other: "басқа нәрсе",
     unknown: "Естімей қалдым, қайталап жіберіңізші.",
+    openQuestion: "Тыңдап тұрмын. Қандай сұрақпен хабарласып тұрсыз, айтып жіберіңізші?",
   },
 };
 
 function scenarioOpening(id: string, lang: ReplyLanguage, catalog: Catalog): string {
+  // Шаблон SYS_UNCLEAR ждёт два варианта; когда их нет (приветствие, шум), спрашиваем открыто, а не читаем поля шаблона.
+  if (id === "SYS_UNCLEAR") return FALLBACK[lang].openQuestion;
   if (id.startsWith("SYS_")) {
     return catalog.system_intents.find((i) => i.id === id)?.response?.[lang] ?? FALLBACK[lang].unknown;
   }
