@@ -1,3 +1,9 @@
 packages:
   - "apps/*"
   - "packages/*"
+
+# pnpm 12: build-скрипты новых зависимостей надо разрешить или запретить явно, иначе install --frozen-lockfile падает
+# (ERR_PNPM_IGNORED_BUILDS). Оба пакета работают без своих скриптов сборки.
+allowBuilds:
+  "@google/genai": false
+  protobufjs: false
