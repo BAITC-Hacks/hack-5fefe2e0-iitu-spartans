@@ -311,6 +311,7 @@ PostgreSQL 16, для сервиса выбора сценария — Python 3.
 | `DATABASE_URL` | `web`, `pnpm db:migrate` | строка подключения к PostgreSQL; в Compose задана в `docker-compose.yml` |
 | `ROUTER_URL` | `web` | адрес сервиса выбора сценария; в Compose — `http://router:8000`; пусто — маршрутизатор ядра |
 | `ROUTER_MODEL` | `web`, `router` | модель выбора сценария; пусто — `gpt-5.4-mini` |
+| `ROUTER_BASE_URL`, `ROUTER_API_KEY` | `web` | любой OpenAI-совместимый вход (Chat Completions) для маршрутизатора ядра: тот же промпт и та же проверка ответа; пусто — OpenAI и `OPENAI_API_KEY` |
 | `ROUTER_REASONING_EFFORT` | `web`, `router` | глубина рассуждения моделей gpt-5; пусто — `none` (быстрее) |
 | `STT_MODEL` | `web` | модель распознавания речи; пусто — `gpt-transcribe` |
 | `TTS_MODEL`, `TTS_VOICE` | `web` | модель и голос синтеза; пусто — `gpt-4o-mini-tts`, `coral` |

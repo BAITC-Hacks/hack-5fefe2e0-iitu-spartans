@@ -26,6 +26,10 @@ services:
       STT_MODEL: ${STT_MODEL:-}
       TTS_MODEL: ${TTS_MODEL:-}
       TTS_VOICE: ${TTS_VOICE:-}
+      # Поставщик модели маршрутизатора ядра (резервный путь); пусто — OpenAI с OPENAI_API_KEY.
+      ROUTER_BASE_URL: ${ROUTER_BASE_URL:-}
+      ROUTER_API_KEY: ${ROUTER_API_KEY:-}
+      ROUTER_MODEL: ${ROUTER_MODEL:-}
       # Основной путь выбора сценария. Если сервис недоступен, web решает сам (маршрутизатор ядра или демо).
       ROUTER_URL: http://router:8000
     ports:
