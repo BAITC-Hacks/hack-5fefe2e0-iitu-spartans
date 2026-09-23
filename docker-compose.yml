@@ -1,0 +1,34 @@
+# Запуск всей системы одной командой: docker compose up --build
+# Приложение: http://localhost:3000 · проверка готовности: http://localhost:3000/api/health
+
+services:
+  db:
+    image: postgres:16-alpine
+    # Учётные данные локальной базы для разработки и проверки; наружу порт базы не публикуется.
+    environment:
+      POSTGRES_USER: voice_router
+      POSTGRES_PASSWORD: voice_router
+      POSTGRES_DB: voice_router
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U voice_router -d voice_router"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    environment:
+      DATABASE_URL: postgres://voice_router:voice_router@db:5432/voice_router
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      DEMO_MODE: ${DEMO_MODE:-mock}
+    ports:
+      - "3000:3000"
+    # Приложение стартует только после того, как база прошла проверку готовности.
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db-data:

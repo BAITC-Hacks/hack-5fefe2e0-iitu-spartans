@@ -11,11 +11,16 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "verify": "pnpm install --frozen-lockfile && pnpm typecheck && pnpm test"
+    "verify": "pnpm install --frozen-lockfile && pnpm typecheck && pnpm test",
+    "db:migrate": "node db/migrate.ts"
   },
   "devDependencies": {
     "@types/node": "26.6.2",
+    "@types/pg": "8.23.1",
     "typescript": "7.0.2",
     "vitest": "5.0.1"
+  },
+  "dependencies": {
+    "pg": "8.23.0"
   }
 }
