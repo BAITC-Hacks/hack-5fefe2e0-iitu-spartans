@@ -17,8 +17,10 @@ import { completeWithOpenAI, hasModelKey } from "../../../lib/server/completion"
  * Один ход диалога: реплика -> выбор сценария -> политика -> ответ из данных набора -> трассировка.
  *
  * Источник решения выбирается по окружению, система работает в любом из трёх вариантов:
- * ROUTER_URL — сервис выбора сценария (FastAPI); OPENAI_API_KEY — LLM-маршрутизатор ядра;
+ * ROUTER_URL — сервис выбора сценария (FastAPI, основной путь); OPENAI_API_KEY — LLM-маршрутизатор ядра;
  * без обоих — демо-режим для проверки без личных ключей (Положение §5.6.6).
+ * Если сервис недоступен или ответил ошибкой, ход не обрывается: решение принимает резервный путь
+ * (маршрутизатор ядра или демо-режим), причина сбоя сервиса попадает в трассировку.
  */
 export const dynamic = "force-dynamic";
 
@@ -35,6 +37,14 @@ const RequestSchema = z.object({
 
 /** Сколько реплик истории хранить в состоянии: достаточно для контекста, не раздувает промпт. */
 const HISTORY_LIMIT = 12;
+
+/**
+ * После сбоя сервиса выбора сценария ходы на это время идут сразу резервным путём. Остановленный
+ * контейнер не отвечает быстро: имя router в сети compose не разрешается ~5 с (EAI_AGAIN), и без паузы
+ * каждый ход ждал бы эти секунды.
+ */
+const SERVICE_RETRY_AFTER_MS = 30_000;
+let serviceDownUntil = 0;
 
 async function routeViaService(url: string, utterance: string, state: ClientDialogState): Promise<RouteDecision> {
   const response = await fetch(`${url.replace(/\/$/, "")}/route`, {
@@ -64,25 +74,32 @@ export async function POST(request: Request): Promise<Response> {
   const routerStarted = Date.now();
   const serviceUrl = process.env.ROUTER_URL;
 
-  if (serviceUrl) {
+  if (serviceUrl && Date.now() < serviceDownUntil) {
+    error = "router-service недоступен, повтор после паузы";
+  } else if (serviceUrl) {
     source = "router-service";
     try {
       decision = await routeViaService(serviceUrl, utterance, state);
     } catch (e) {
       error = e instanceof Error ? e.message : String(e);
+      serviceDownUntil = Date.now() + SERVICE_RETRY_AFTER_MS;
     }
-  } else if (hasModelKey()) {
-    source = "core-llm";
-    const context = {
-      history: state.history,
-      ...(state.language ? { language: state.language } : {}),
-      ...(state.activeScenario ? { activeScenario: state.activeScenario } : {}),
-    };
-    const outcome = await routeUtterance({ utterance, context, catalog }, { complete: completeWithOpenAI, now: Date.now });
-    if (outcome.ok) decision = outcome.decision;
-    else error = `${outcome.error}: ${outcome.detail}`;
-  } else {
-    decision = demoDecision(catalog, utterance);
+  }
+  if (!decision) {
+    if (hasModelKey()) {
+      source = "core-llm";
+      const context = {
+        history: state.history,
+        ...(state.language ? { language: state.language } : {}),
+        ...(state.activeScenario ? { activeScenario: state.activeScenario } : {}),
+      };
+      const outcome = await routeUtterance({ utterance, context, catalog }, { complete: completeWithOpenAI, now: Date.now });
+      if (outcome.ok) decision = outcome.decision;
+      else error = [error, `${outcome.error}: ${outcome.detail}`].filter(Boolean).join("; ");
+    } else {
+      source = "demo";
+      decision = demoDecision(catalog, utterance);
+    }
   }
   const routerMs = Date.now() - routerStarted;
 
