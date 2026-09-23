@@ -1,0 +1,2662 @@
+{
+  "version": 1,
+  "source": {
+    "scenarios": 40,
+    "slots": 43,
+    "sha256": {
+      "scenarios.json": "6d057b81df7612fc7aa6528a200c0f933729c0c65c02f991a6af30d40d9bb6c4",
+      "slots.json": "56d74f31d257577bf9cd7f70eb337bdfe05fc4c2c632339a56bc4af1a23ab347"
+    }
+  },
+  "terms": [
+    {
+      "term": "страховка",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 26,
+      "frequency": 42,
+      "scenarios": [
+        "SC01",
+        "SC02",
+        "SC04",
+        "SC05",
+        "SC06",
+        "SC07",
+        "SC08",
+        "SC09",
+        "SC10",
+        "SC12",
+        "SC14",
+        "SC15",
+        "SC16",
+        "SC21",
+        "SC22",
+        "SC23",
+        "SC24",
+        "SC25",
+        "SC26",
+        "SC27",
+        "SC28",
+        "SC30",
+        "SC31",
+        "SC32",
+        "SC38",
+        "SC39"
+      ],
+      "forms": [
+        "страхование",
+        "страхования",
+        "страховка",
+        "страховке",
+        "страховки",
+        "страховку",
+        "страховой"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "сақтандыру",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 24,
+      "frequency": 38,
+      "scenarios": [
+        "SC01",
+        "SC02",
+        "SC03",
+        "SC04",
+        "SC06",
+        "SC07",
+        "SC08",
+        "SC09",
+        "SC10",
+        "SC12",
+        "SC14",
+        "SC15",
+        "SC16",
+        "SC21",
+        "SC22",
+        "SC23",
+        "SC24",
+        "SC25",
+        "SC26",
+        "SC27",
+        "SC28",
+        "SC30",
+        "SC32",
+        "SC39"
+      ],
+      "forms": [
+        "сақтандырасыз",
+        "сақтандырмақсыз",
+        "сақтандыру",
+        "сақтандыруды",
+        "сақтандыруы",
+        "сақтандыруым",
+        "сақтандыруға",
+        "сақтандырылған",
+        "сақтандырғым",
+        "сақтандырғымыз",
+        "сақтандырғыңыз",
+        "сақтаңыз"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "полис",
+      "kind": "word",
+      "lang": "shared",
+      "coverage": 17,
+      "frequency": 42,
+      "scenarios": [
+        "SC02",
+        "SC04",
+        "SC05",
+        "SC12",
+        "SC16",
+        "SC21",
+        "SC22",
+        "SC25",
+        "SC26",
+        "SC27",
+        "SC28",
+        "SC29",
+        "SC30",
+        "SC31",
+        "SC38",
+        "SC39",
+        "SC40"
+      ],
+      "forms": [
+        "полис",
+        "полиса",
+        "полисе",
+        "полиске",
+        "полисте",
+        "полистен",
+        "полистерім",
+        "полисті",
+        "полистің",
+        "полису",
+        "полисы",
+        "полисі",
+        "полисім",
+        "полисінің",
+        "полисіңіз"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "көлік",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 10,
+      "frequency": 14,
+      "scenarios": [
+        "SC01",
+        "SC02",
+        "SC03",
+        "SC05",
+        "SC11",
+        "SC13",
+        "SC20",
+        "SC25",
+        "SC28",
+        "SC36"
+      ],
+      "forms": [
+        "көлік",
+        "көлікке",
+        "көліктерді",
+        "көлікті",
+        "көліктің"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "машину",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 9,
+      "frequency": 19,
+      "scenarios": [
+        "SC01",
+        "SC02",
+        "SC03",
+        "SC05",
+        "SC11",
+        "SC13",
+        "SC20",
+        "SC25",
+        "SC28"
+      ],
+      "forms": [
+        "машина",
+        "машину",
+        "машины"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "застраховать",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 9,
+      "frequency": 11,
+      "scenarios": [
+        "SC02",
+        "SC03",
+        "SC06",
+        "SC07",
+        "SC08",
+        "SC10",
+        "SC12",
+        "SC13",
+        "SC14"
+      ],
+      "forms": [
+        "застрахован",
+        "застрахована",
+        "застраховать",
+        "застраховаться",
+        "застрахуем"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "стоит",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 7,
+      "frequency": 7,
+      "scenarios": [
+        "SC01",
+        "SC03",
+        "SC06",
+        "SC07",
+        "SC08",
+        "SC09",
+        "SC19"
+      ],
+      "forms": [
+        "стоит"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "өтініш",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 7,
+      "frequency": 7,
+      "scenarios": [
+        "SC12",
+        "SC13",
+        "SC14",
+        "SC17",
+        "SC18",
+        "SC19",
+        "SC20"
+      ],
+      "forms": [
+        "өтініш",
+        "өтініші",
+        "өтінішім",
+        "өтінішін"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "КАСКО",
+      "kind": "acronym",
+      "lang": "shared",
+      "coverage": 6,
+      "frequency": 18,
+      "scenarios": [
+        "SC03",
+        "SC04",
+        "SC13",
+        "SC27",
+        "SC31",
+        "SC40"
+      ],
+      "forms": [
+        "КАСКО",
+        "каско"
+      ],
+      "slotValues": [
+        "product_type=casco"
+      ]
+    },
+    {
+      "term": "ДМС",
+      "kind": "acronym",
+      "lang": "shared",
+      "coverage": 6,
+      "frequency": 11,
+      "scenarios": [
+        "SC09",
+        "SC10",
+        "SC21",
+        "SC22",
+        "SC23",
+        "SC24"
+      ],
+      "forms": [
+        "ДМС"
+      ],
+      "slotValues": [
+        "product_type=dms"
+      ]
+    },
+    {
+      "term": "төлем",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 6,
+      "frequency": 8,
+      "scenarios": [
+        "SC12",
+        "SC16",
+        "SC17",
+        "SC18",
+        "SC19",
+        "SC40"
+      ],
+      "forms": [
+        "төлем",
+        "төлемге",
+        "төлемді",
+        "төлемеңіз",
+        "төлемнен"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "ОГПО",
+      "kind": "acronym",
+      "lang": "shared",
+      "coverage": 6,
+      "frequency": 6,
+      "scenarios": [
+        "SC01",
+        "SC02",
+        "SC04",
+        "SC12",
+        "SC27",
+        "SC32"
+      ],
+      "forms": [
+        "ОГПО"
+      ],
+      "slotValues": [
+        "product_type=ogpo"
+      ]
+    },
+    {
+      "term": "тұрады",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 6,
+      "frequency": 6,
+      "scenarios": [
+        "SC01",
+        "SC03",
+        "SC06",
+        "SC07",
+        "SC08",
+        "SC09"
+      ],
+      "forms": [
+        "тұрады"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "заявление",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 5,
+      "frequency": 6,
+      "scenarios": [
+        "SC12",
+        "SC17",
+        "SC18",
+        "SC19",
+        "SC20"
+      ],
+      "forms": [
+        "заявление",
+        "заявлению",
+        "заявления"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "оплате",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 5,
+      "frequency": 6,
+      "scenarios": [
+        "SC26",
+        "SC30",
+        "SC31",
+        "SC34",
+        "SC39"
+      ],
+      "forms": [
+        "оплате",
+        "оплатил",
+        "оплатить",
+        "оплату",
+        "оплаты"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "работаете",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 5,
+      "frequency": 6,
+      "scenarios": [
+        "SC09",
+        "SC10",
+        "SC21",
+        "SC23",
+        "SC33"
+      ],
+      "forms": [
+        "работает",
+        "работаете",
+        "работают",
+        "работников",
+        "работодатель",
+        "работы"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "хабарласамыз",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 4,
+      "frequency": 8,
+      "scenarios": [
+        "SC15",
+        "SC35",
+        "SC36",
+        "SC38"
+      ],
+      "forms": [
+        "хабардар",
+        "хабарлама",
+        "хабарласа",
+        "хабарласады",
+        "хабарласамыз",
+        "хабарласпады",
+        "хабарласып",
+        "хабарласыңыз",
+        "хабарласыңызшы",
+        "хабарласқан"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "медициналық",
+      "kind": "word",
+      "lang": "shared",
+      "coverage": 4,
+      "frequency": 6,
+      "scenarios": [
+        "SC09",
+        "SC10",
+        "SC23",
+        "SC24"
+      ],
+      "forms": [
+        "медициналық",
+        "медицинским",
+        "медицинскую"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "жүргізушінің",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 4,
+      "frequency": 5,
+      "scenarios": [
+        "SC01",
+        "SC04",
+        "SC12",
+        "SC36"
+      ],
+      "forms": [
+        "жүргізеді",
+        "жүргізуші",
+        "жүргізушіге",
+        "жүргізушілердің",
+        "жүргізушіні",
+        "жүргізушінің",
+        "жүргізіп"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "оформим",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 4,
+      "frequency": 5,
+      "scenarios": [
+        "SC02",
+        "SC06",
+        "SC25",
+        "SC26"
+      ],
+      "forms": [
+        "оформилось",
+        "оформим",
+        "оформите",
+        "оформить",
+        "оформлен",
+        "оформления",
+        "оформляем",
+        "оформляли",
+        "оформят"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "SMS",
+      "kind": "acronym",
+      "lang": "shared",
+      "coverage": 3,
+      "frequency": 7,
+      "scenarios": [
+        "SC26",
+        "SC34",
+        "SC38"
+      ],
+      "forms": [
+        "SMS"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "документы",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 3,
+      "frequency": 5,
+      "scenarios": [
+        "SC17",
+        "SC18",
+        "SC26"
+      ],
+      "forms": [
+        "документ",
+        "документа",
+        "документов",
+        "документы"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "қайта",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 3,
+      "frequency": 5,
+      "scenarios": [
+        "SC26",
+        "SC28",
+        "SC35"
+      ],
+      "forms": [
+        "қайта",
+        "қайтарамын",
+        "қайтарылады",
+        "қайтарылатын",
+        "қайтарыңыз"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "деньги",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 3,
+      "frequency": 4,
+      "scenarios": [
+        "SC28",
+        "SC30",
+        "SC38"
+      ],
+      "forms": [
+        "деньги"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "рәсімдейік",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 3,
+      "frequency": 4,
+      "scenarios": [
+        "SC02",
+        "SC06",
+        "SC30"
+      ],
+      "forms": [
+        "рәсімдеген",
+        "рәсімдегім",
+        "рәсімдегіміз",
+        "рәсімдейміз",
+        "рәсімдейік",
+        "рәсімделгенге",
+        "рәсімделеді",
+        "рәсімделмеді",
+        "рәсімдеп"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "случая",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 3,
+      "frequency": 4,
+      "scenarios": [
+        "SC08",
+        "SC16",
+        "SC40"
+      ],
+      "forms": [
+        "случаев",
+        "случай",
+        "случая",
+        "случаях"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "ДТП",
+      "kind": "acronym",
+      "lang": "ru",
+      "coverage": 3,
+      "frequency": 3,
+      "scenarios": [
+        "SC11",
+        "SC12",
+        "SC18"
+      ],
+      "forms": [
+        "ДТП"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "договор",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 3,
+      "frequency": 3,
+      "scenarios": [
+        "SC28",
+        "SC29",
+        "SC39"
+      ],
+      "forms": [
+        "договор",
+        "договора",
+        "договоре"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "покрывает",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 3,
+      "frequency": 3,
+      "scenarios": [
+        "SC03",
+        "SC22",
+        "SC40"
+      ],
+      "forms": [
+        "покрывает",
+        "покрываются",
+        "покрытие"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "шартты",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 3,
+      "frequency": 3,
+      "scenarios": [
+        "SC07",
+        "SC29",
+        "SC39"
+      ],
+      "forms": [
+        "шарттары",
+        "шарттарын",
+        "шарттағы",
+        "шартты",
+        "шарттың"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "ИИН",
+      "kind": "acronym",
+      "lang": "ru",
+      "coverage": 3,
+      "frequency": 0,
+      "scenarios": [
+        "SC04",
+        "SC12",
+        "SC32"
+      ],
+      "forms": [
+        "ИИН"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "карта",
+      "kind": "word",
+      "lang": "shared",
+      "coverage": 2,
+      "frequency": 5,
+      "scenarios": [
+        "SC24",
+        "SC38"
+      ],
+      "forms": [
+        "карта",
+        "картаны",
+        "картасы",
+        "картасын",
+        "картаға"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "квартиру",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 2,
+      "frequency": 4,
+      "scenarios": [
+        "SC07",
+        "SC14"
+      ],
+      "forms": [
+        "квартира",
+        "квартиру"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "клиника",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 2,
+      "frequency": 4,
+      "scenarios": [
+        "SC23",
+        "SC24"
+      ],
+      "forms": [
+        "клиник",
+        "клиника",
+        "клинике",
+        "клиники"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "перезвонили",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 2,
+      "frequency": 4,
+      "scenarios": [
+        "SC35",
+        "SC36"
+      ],
+      "forms": [
+        "перезвонили",
+        "перезвоним",
+        "перезвоните",
+        "перезвонить"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "пәтер",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 2,
+      "frequency": 4,
+      "scenarios": [
+        "SC07",
+        "SC14"
+      ],
+      "forms": [
+        "пәтер",
+        "пәтерімді"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "қызметті",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 2,
+      "frequency": 4,
+      "scenarios": [
+        "SC10",
+        "SC35"
+      ],
+      "forms": [
+        "қызмет",
+        "қызметкер",
+        "қызметкерге",
+        "қызметкерді",
+        "қызметкерлерін",
+        "қызметкеріңізге",
+        "қызметті",
+        "қызметіне"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "құжат",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 2,
+      "frequency": 4,
+      "scenarios": [
+        "SC17",
+        "SC18"
+      ],
+      "forms": [
+        "құжат",
+        "құжаттар",
+        "құжаттарды"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "өзгерді",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 2,
+      "frequency": 4,
+      "scenarios": [
+        "SC05",
+        "SC29"
+      ],
+      "forms": [
+        "өзгерді",
+        "өзгертейік",
+        "өзгертеміз",
+        "өзгертемін",
+        "өзгерткім",
+        "өзгерту"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "Алматы",
+      "kind": "word",
+      "lang": "shared",
+      "coverage": 2,
+      "frequency": 3,
+      "scenarios": [
+        "SC01",
+        "SC33"
+      ],
+      "forms": [
+        "алматы",
+        "алматыдағы"
+      ],
+      "slotValues": [
+        "city=Almaty",
+        "region=almaty"
+      ]
+    },
+    {
+      "term": "авария",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 2,
+      "frequency": 3,
+      "scenarios": [
+        "SC11",
+        "SC12"
+      ],
+      "forms": [
+        "аварий",
+        "аварию",
+        "авария"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "адрес",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 2,
+      "frequency": 3,
+      "scenarios": [
+        "SC29",
+        "SC33"
+      ],
+      "forms": [
+        "адрес",
+        "адресами"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "водителя",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 2,
+      "frequency": 3,
+      "scenarios": [
+        "SC01",
+        "SC04"
+      ],
+      "forms": [
+        "водителей",
+        "водитель",
+        "водителя"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "дәрігерге",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 2,
+      "frequency": 3,
+      "scenarios": [
+        "SC15",
+        "SC21"
+      ],
+      "forms": [
+        "дәрігер",
+        "дәрігерге",
+        "дәрігеріне"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "жарақат",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 2,
+      "frequency": 3,
+      "scenarios": [
+        "SC08",
+        "SC16"
+      ],
+      "forms": [
+        "жарақат",
+        "жарақаттан"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "карту",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 2,
+      "frequency": 3,
+      "scenarios": [
+        "SC24",
+        "SC38"
+      ],
+      "forms": [
+        "карту"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "несчастного",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 2,
+      "frequency": 3,
+      "scenarios": [
+        "SC08",
+        "SC16"
+      ],
+      "forms": [
+        "несчастного",
+        "несчастных"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "получить",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 2,
+      "frequency": 3,
+      "scenarios": [
+        "SC12",
+        "SC16"
+      ],
+      "forms": [
+        "получается",
+        "получил",
+        "получить"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "приложении",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 2,
+      "frequency": 3,
+      "scenarios": [
+        "SC30",
+        "SC34"
+      ],
+      "forms": [
+        "приложение",
+        "приложении"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "просит",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 2,
+      "frequency": 3,
+      "scenarios": [
+        "SC24",
+        "SC38"
+      ],
+      "forms": [
+        "просили",
+        "просим",
+        "просит"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "травму",
+      "kind": "word",
+      "lang": "shared",
+      "coverage": 2,
+      "frequency": 3,
+      "scenarios": [
+        "SC08",
+        "SC16"
+      ],
+      "forms": [
+        "травм",
+        "травмпункта",
+        "травмпункттен",
+        "травму",
+        "травмы"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "ақша",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC30",
+        "SC38"
+      ],
+      "forms": [
+        "ақша"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "жазатайым",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC08",
+        "SC16"
+      ],
+      "forms": [
+        "жазатайым"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "жазып",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC20",
+        "SC21"
+      ],
+      "forms": [
+        "жазып"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "жаңа",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC02",
+        "SC04"
+      ],
+      "forms": [
+        "жаңа"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "жеке",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC09",
+        "SC34"
+      ],
+      "forms": [
+        "жеке"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "жұмыс",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC23",
+        "SC33"
+      ],
+      "forms": [
+        "жұмыс"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "записала",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC20",
+        "SC21"
+      ],
+      "forms": [
+        "записала",
+        "записать",
+        "записаться"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "запишите",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC20",
+        "SC21"
+      ],
+      "forms": [
+        "запишите",
+        "запишу"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "затопили",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC07",
+        "SC14"
+      ],
+      "forms": [
+        "затопили",
+        "затопление",
+        "затопления"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "зақымды",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC03",
+        "SC20"
+      ],
+      "forms": [
+        "зақымданудан",
+        "зақымды",
+        "зақымның"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "изменить",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC05",
+        "SC29"
+      ],
+      "forms": [
+        "изменить"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "кеңсе",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC31",
+        "SC33"
+      ],
+      "forms": [
+        "кеңсе",
+        "кеңседе",
+        "кеңселеріңіз"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "көлігімді",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC05",
+        "SC13"
+      ],
+      "forms": [
+        "көлігі",
+        "көлігімді"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "мекенжай",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC29",
+        "SC33"
+      ],
+      "forms": [
+        "мекенжай",
+        "мекенжайды",
+        "мекенжайларымен",
+        "мекенжайы",
+        "мекенжайын",
+        "мекенжайына"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "номер",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC05",
+        "SC29"
+      ],
+      "forms": [
+        "номер",
+        "номера"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "нөмірін",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC05",
+        "SC29"
+      ],
+      "forms": [
+        "нөмірі",
+        "нөмірім",
+        "нөмірін",
+        "нөміріне",
+        "нөміріңізді"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "отправила",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC18",
+        "SC26"
+      ],
+      "forms": [
+        "отправила",
+        "отправить",
+        "отправлен",
+        "отправлю",
+        "отправьте"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "оқиғадан",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC08",
+        "SC16"
+      ],
+      "forms": [
+        "оқиға",
+        "оқиғадан"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "пожар",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC07",
+        "SC14"
+      ],
+      "forms": [
+        "пожар",
+        "пожара"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "посчитаю",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC01",
+        "SC03"
+      ],
+      "forms": [
+        "посчитайте",
+        "посчитаю"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "почту",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC26",
+        "SC29"
+      ],
+      "forms": [
+        "почту"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "пошта",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC26",
+        "SC29"
+      ],
+      "forms": [
+        "пошта",
+        "поштаны",
+        "поштасына",
+        "поштаға",
+        "поштаңызды"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "соседи",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC07",
+        "SC14"
+      ],
+      "forms": [
+        "соседей",
+        "соседи",
+        "соседями"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "сотрудников",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC10",
+        "SC35"
+      ],
+      "forms": [
+        "сотрудника",
+        "сотрудников"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "шағым",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 2,
+      "frequency": 2,
+      "scenarios": [
+        "SC19",
+        "SC35"
+      ],
+      "forms": [
+        "шағым",
+        "шағымданғым",
+        "шағымы"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "виновника",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 1,
+      "frequency": 3,
+      "scenarios": [
+        "SC12"
+      ],
+      "forms": [
+        "виновата",
+        "виновник",
+        "виновника",
+        "виновного"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "компания",
+      "kind": "word",
+      "lang": "shared",
+      "coverage": 1,
+      "frequency": 3,
+      "scenarios": [
+        "SC10"
+      ],
+      "forms": [
+        "компании",
+        "компания",
+        "компанияңыздың"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "продлить",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 1,
+      "frequency": 3,
+      "scenarios": [
+        "SC27"
+      ],
+      "forms": [
+        "продлим",
+        "продлите",
+        "продлить"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "ұзартып",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 1,
+      "frequency": 3,
+      "scenarios": [
+        "SC27"
+      ],
+      "forms": [
+        "ұзартайық",
+        "ұзартуға",
+        "ұзартып",
+        "ұзартқым"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "Астане",
+      "kind": "word",
+      "lang": "shared",
+      "coverage": 1,
+      "frequency": 2,
+      "scenarios": [
+        "SC23"
+      ],
+      "forms": [
+        "астанадағы",
+        "астане"
+      ],
+      "slotValues": [
+        "city=Astana",
+        "region=astana"
+      ]
+    },
+    {
+      "term": "МРТ",
+      "kind": "acronym",
+      "lang": "shared",
+      "coverage": 1,
+      "frequency": 2,
+      "scenarios": [
+        "SC22"
+      ],
+      "forms": [
+        "МРТ"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "Шымкенте",
+      "kind": "word",
+      "lang": "shared",
+      "coverage": 1,
+      "frequency": 2,
+      "scenarios": [
+        "SC33"
+      ],
+      "forms": [
+        "шымкенте",
+        "шымкенттегі"
+      ],
+      "slotValues": [
+        "city=Shymkent"
+      ]
+    },
+    {
+      "term": "добавить",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 1,
+      "frequency": 2,
+      "scenarios": [
+        "SC04"
+      ],
+      "forms": [
+        "добавим",
+        "добавить",
+        "добавлен"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "емханада",
+      "kind": "word",
+      "lang": "kk",
+      "coverage": 1,
+      "frequency": 2,
+      "scenarios": [
+        "SC23"
+      ],
+      "forms": [
+        "емханада",
+        "емханалар",
+        "емханаларға",
+        "емханасына"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "корпоративтік",
+      "kind": "word",
+      "lang": "shared",
+      "coverage": 1,
+      "frequency": 2,
+      "scenarios": [
+        "SC10"
+      ],
+      "forms": [
+        "корпоративное",
+        "корпоративных",
+        "корпоративтік"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "осмотр",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 1,
+      "frequency": 2,
+      "scenarios": [
+        "SC20"
+      ],
+      "forms": [
+        "осмотр"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "справка",
+      "kind": "word",
+      "lang": "ru",
+      "coverage": 1,
+      "frequency": 2,
+      "scenarios": [
+        "SC39"
+      ],
+      "forms": [
+        "справка"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "телефон",
+      "kind": "word",
+      "lang": "shared",
+      "coverage": 1,
+      "frequency": 2,
+      "scenarios": [
+        "SC29"
+      ],
+      "forms": [
+        "телефон",
+        "телефона",
+        "телефоныңызды"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "франшиза",
+      "kind": "word",
+      "lang": "shared",
+      "coverage": 1,
+      "frequency": 2,
+      "scenarios": [
+        "SC40"
+      ],
+      "forms": [
+        "франшиза",
+        "франшизасыз",
+        "франшизу"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "электрондық",
+      "kind": "word",
+      "lang": "shared",
+      "coverage": 1,
+      "frequency": 2,
+      "scenarios": [
+        "SC24"
+      ],
+      "forms": [
+        "электрондық",
+        "электронную"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "ЖКО",
+      "kind": "acronym",
+      "lang": "kk",
+      "coverage": 1,
+      "frequency": 1,
+      "scenarios": [
+        "SC12"
+      ],
+      "forms": [
+        "ЖКО"
+      ],
+      "slotValues": []
+    },
+    {
+      "term": "ЖСН",
+      "kind": "acronym",
+      "lang": "kk",
+      "coverage": 0,
+      "frequency": 0,
+      "scenarios": [],
+      "forms": [
+        "ЖСН"
+      ],
+      "slotValues": []
+    }
+  ],
+  "ru": [
+    "страховка",
+    "машину",
+    "застраховать",
+    "стоит",
+    "заявление",
+    "оплате",
+    "работаете",
+    "оформим",
+    "документы",
+    "деньги",
+    "случая",
+    "ДТП",
+    "договор",
+    "покрывает",
+    "ИИН",
+    "квартиру",
+    "клиника",
+    "перезвонили",
+    "авария",
+    "адрес",
+    "водителя",
+    "карту",
+    "несчастного",
+    "получить",
+    "приложении",
+    "просит",
+    "записала",
+    "запишите",
+    "затопили",
+    "изменить",
+    "номер",
+    "отправила",
+    "пожар",
+    "посчитаю",
+    "почту",
+    "соседи",
+    "сотрудников",
+    "виновника",
+    "продлить",
+    "добавить",
+    "осмотр",
+    "справка"
+  ],
+  "kk": [
+    "сақтандыру",
+    "көлік",
+    "өтініш",
+    "төлем",
+    "тұрады",
+    "хабарласамыз",
+    "жүргізушінің",
+    "қайта",
+    "рәсімдейік",
+    "шартты",
+    "пәтер",
+    "қызметті",
+    "құжат",
+    "өзгерді",
+    "дәрігерге",
+    "жарақат",
+    "ақша",
+    "жазатайым",
+    "жазып",
+    "жаңа",
+    "жеке",
+    "жұмыс",
+    "зақымды",
+    "кеңсе",
+    "көлігімді",
+    "мекенжай",
+    "нөмірін",
+    "оқиғадан",
+    "пошта",
+    "шағым",
+    "ұзартып",
+    "емханада",
+    "ЖКО",
+    "ЖСН"
+  ],
+  "shared": [
+    "полис",
+    "КАСКО",
+    "ДМС",
+    "ОГПО",
+    "медициналық",
+    "SMS",
+    "карта",
+    "Алматы",
+    "травму",
+    "компания",
+    "Астане",
+    "МРТ",
+    "Шымкенте",
+    "корпоративтік",
+    "телефон",
+    "франшиза",
+    "электрондық"
+  ],
+  "identifiers": [
+    {
+      "slot": "policy_number",
+      "keyword": "SQ-OGPO",
+      "sample": "SQ-OGPO-123456"
+    },
+    {
+      "slot": "policy_number",
+      "keyword": "SQ-CASCO",
+      "sample": "SQ-CASCO-123456"
+    },
+    {
+      "slot": "policy_number",
+      "keyword": "SQ-TRVL",
+      "sample": "SQ-TRVL-123456"
+    },
+    {
+      "slot": "policy_number",
+      "keyword": "SQ-PROP",
+      "sample": "SQ-PROP-123456"
+    },
+    {
+      "slot": "policy_number",
+      "keyword": "SQ-NS",
+      "sample": "SQ-NS-123456"
+    },
+    {
+      "slot": "policy_number",
+      "keyword": "SQ-DMS",
+      "sample": "SQ-DMS-123456"
+    },
+    {
+      "slot": "claim_number",
+      "keyword": "CL",
+      "sample": "CL-123456"
+    }
+  ],
+  "phrases": [
+    {
+      "lang": "ru",
+      "text": "Хочу продлить страховку",
+      "scenarioId": "SC27",
+      "terms": [
+        "страховка",
+        "продлить"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Сақтандыру МРТ-ны өтей ме?",
+      "scenarioId": "SC22",
+      "terms": [
+        "сақтандыру",
+        "МРТ"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Действует ли мой полис?",
+      "scenarioId": "SC25",
+      "terms": [
+        "полис"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Полисім жарамды ма?",
+      "scenarioId": "SC25",
+      "terms": [
+        "полис"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Жаңа көлік алдым, полис керек",
+      "scenarioId": "SC02",
+      "terms": [
+        "полис",
+        "көлік",
+        "жаңа"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Замените машину в страховке",
+      "scenarioId": "SC05",
+      "terms": [
+        "страховка",
+        "машину"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Хочу застраховать квартиру",
+      "scenarioId": "SC07",
+      "terms": [
+        "застраховать",
+        "квартиру"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Сколько стоит ДМС для физлица?",
+      "scenarioId": "SC09",
+      "terms": [
+        "стоит",
+        "ДМС"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Өтінішім қандай күйде?",
+      "scenarioId": "SC17",
+      "terms": [
+        "өтініш"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Есть рассрочка на КАСКО?",
+      "scenarioId": "SC31",
+      "terms": [
+        "КАСКО"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "КАСКО қанша тұрады?",
+      "scenarioId": "SC03",
+      "terms": [
+        "КАСКО",
+        "тұрады"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Не могу найти карточку ДМС",
+      "scenarioId": "SC24",
+      "terms": [
+        "ДМС"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "ДМС бағдарламаларыңыз қандай?",
+      "scenarioId": "SC09",
+      "terms": [
+        "ДМС"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Төлем сомасы тым аз",
+      "scenarioId": "SC19",
+      "terms": [
+        "төлем"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Хочу добавить жену в ОГПО",
+      "scenarioId": "SC04",
+      "terms": [
+        "ОГПО",
+        "добавить"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "ОГПО рәсімдеп беріңізші",
+      "scenarioId": "SC02",
+      "terms": [
+        "ОГПО",
+        "рәсімдейік"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Запишите на осмотр по заявлению",
+      "scenarioId": "SC20",
+      "terms": [
+        "заявление",
+        "запишите",
+        "осмотр"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Как можно оплатить полис?",
+      "scenarioId": "SC31",
+      "terms": [
+        "полис",
+        "оплате"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Нужен ДМС для 50 работников",
+      "scenarioId": "SC10",
+      "terms": [
+        "ДМС",
+        "работаете"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Қайта хабарласамыз деп, хабарласпады",
+      "scenarioId": "SC35",
+      "terms": [
+        "хабарласамыз",
+        "қайта"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Можно купить медицинскую страховку для себя?",
+      "scenarioId": "SC09",
+      "terms": [
+        "страховка",
+        "медициналық"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Медициналық сақтандыру картасы келмеді",
+      "scenarioId": "SC24",
+      "terms": [
+        "сақтандыру",
+        "медициналық",
+        "карта"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Сақтандыруға жаңа жүргізуші қосыңызшы",
+      "scenarioId": "SC04",
+      "terms": [
+        "сақтандыру",
+        "жүргізушінің",
+        "жаңа"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Оформите мне ОГПО, пожалуйста",
+      "scenarioId": "SC02",
+      "terms": [
+        "ОГПО",
+        "оформим"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Не приходит код из SMS",
+      "scenarioId": "SC34",
+      "terms": [
+        "SMS"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "SMS код келмейді",
+      "scenarioId": "SC34",
+      "terms": [
+        "SMS"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Можно документы прислать онлайн?",
+      "scenarioId": "SC18",
+      "terms": [
+        "документы"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Два раза списали деньги за полис",
+      "scenarioId": "SC30",
+      "terms": [
+        "полис",
+        "деньги"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "В каких случаях вы не платите?",
+      "scenarioId": "SC40",
+      "terms": [
+        "случая"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Что нужно принести после ДТП?",
+      "scenarioId": "SC18",
+      "terms": [
+        "ДТП"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Пришлите копию договора",
+      "scenarioId": "SC39",
+      "terms": [
+        "договор"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Что покрывает ваше КАСКО?",
+      "scenarioId": "SC03",
+      "terms": [
+        "КАСКО",
+        "покрывает"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Шарттың көшірмесін жіберіңізші",
+      "scenarioId": "SC39",
+      "terms": [
+        "шартты"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Мне не пришла карта медстраховки",
+      "scenarioId": "SC24",
+      "terms": [
+        "карта"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "ДМС картасын таба алмай жүрмін",
+      "scenarioId": "SC24",
+      "terms": [
+        "ДМС",
+        "карта"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Список ваших клиник в Астане",
+      "scenarioId": "SC23",
+      "terms": [
+        "клиника",
+        "Астане"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Я за рулём, перезвоните через час",
+      "scenarioId": "SC36",
+      "terms": [
+        "перезвонили"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Пәтерімді сақтандырғым келеді",
+      "scenarioId": "SC07",
+      "terms": [
+        "сақтандыру",
+        "пәтер"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Қызмет көрсету өте нашар",
+      "scenarioId": "SC35",
+      "terms": [
+        "қызметті"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Құжаттарды онлайн жіберуге бола ма?",
+      "scenarioId": "SC18",
+      "terms": [
+        "құжат"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Шарттағы мекенжайды өзгерткім келеді",
+      "scenarioId": "SC29",
+      "terms": [
+        "шартты",
+        "өзгерді",
+        "мекенжай"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Где ваш офис в Алматы?",
+      "scenarioId": "SC33",
+      "terms": [
+        "Алматы"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Алматыдағы кеңселеріңіз қайда?",
+      "scenarioId": "SC33",
+      "terms": [
+        "Алматы",
+        "кеңсе"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Авария, машину помяли, я на месте",
+      "scenarioId": "SC11",
+      "terms": [
+        "машину",
+        "авария"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Хочу изменить адрес в договоре",
+      "scenarioId": "SC29",
+      "terms": [
+        "договор",
+        "адрес",
+        "изменить"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Впишите, пожалуйста, нового водителя",
+      "scenarioId": "SC04",
+      "terms": [
+        "водителя"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Ертеңге дәрігерге жазылуға бола ма?",
+      "scenarioId": "SC21",
+      "terms": [
+        "дәрігерге"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Жарақат үшін төлемді қалай аламын?",
+      "scenarioId": "SC16",
+      "terms": [
+        "төлем",
+        "жарақат"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Где взять электронную карту по страховке?",
+      "scenarioId": "SC24",
+      "terms": [
+        "страховка",
+        "карту",
+        "электрондық"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Есть страховка от несчастного случая?",
+      "scenarioId": "SC08",
+      "terms": [
+        "страховка",
+        "случая",
+        "несчастного"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Как получить выплату за травму?",
+      "scenarioId": "SC16",
+      "terms": [
+        "получить",
+        "травму"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Не могу войти в приложение",
+      "scenarioId": "SC34",
+      "terms": [
+        "приложении"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Клиника просит карту ДМС, а у меня её нет",
+      "scenarioId": "SC24",
+      "terms": [
+        "ДМС",
+        "клиника",
+        "карту",
+        "просит"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Ақша шешілді, бірақ полис рәсімделмеді",
+      "scenarioId": "SC30",
+      "terms": [
+        "полис",
+        "рәсімдейік",
+        "ақша"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Жазатайым оқиғадан сақтандыру бар ма?",
+      "scenarioId": "SC08",
+      "terms": [
+        "сақтандыру",
+        "жазатайым",
+        "оқиғадан"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Өтініш бойынша қарауға жазып қойыңызшы",
+      "scenarioId": "SC20",
+      "terms": [
+        "өтініш",
+        "жазып"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Жеке кабинетке қалай тіркелемін?",
+      "scenarioId": "SC34",
+      "terms": [
+        "жеке"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Сенбі күні сағат нешеге дейін жұмыс істейсіздер?",
+      "scenarioId": "SC33",
+      "terms": [
+        "жұмыс"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Хочу записаться на осмотр машины",
+      "scenarioId": "SC20",
+      "terms": [
+        "машину",
+        "записала",
+        "осмотр"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Соседи затопили квартиру, она у вас застрахована",
+      "scenarioId": "SC14",
+      "terms": [
+        "застраховать",
+        "квартиру",
+        "затопили",
+        "соседи"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Зақымды бағалауға көлікті қашан әкелуге болады?",
+      "scenarioId": "SC20",
+      "terms": [
+        "көлік",
+        "зақымды"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Көлігімді ұрлап кетті, КАСКО бар",
+      "scenarioId": "SC13",
+      "terms": [
+        "КАСКО",
+        "көлігімді"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Поменялся номер телефона, обновите",
+      "scenarioId": "SC29",
+      "terms": [
+        "номер",
+        "телефон"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Телефон нөмірім өзгерді, жаңартыңызшы",
+      "scenarioId": "SC29",
+      "terms": [
+        "өзгерді",
+        "нөмірін",
+        "телефон"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Отправьте ещё раз страховку в SMS",
+      "scenarioId": "SC26",
+      "terms": [
+        "страховка",
+        "SMS",
+        "отправила"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Сколько стоит страховка дома от пожара?",
+      "scenarioId": "SC07",
+      "terms": [
+        "страховка",
+        "стоит",
+        "пожар"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Посчитайте КАСКО на Камри 2021 года",
+      "scenarioId": "SC03",
+      "terms": [
+        "КАСКО",
+        "посчитаю"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Не пришёл полис на почту",
+      "scenarioId": "SC26",
+      "terms": [
+        "полис",
+        "почту"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Полис поштаға келмеді",
+      "scenarioId": "SC26",
+      "terms": [
+        "полис",
+        "пошта"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Хотим застраховать сотрудников компании",
+      "scenarioId": "SC10",
+      "terms": [
+        "застраховать",
+        "сотрудников",
+        "компания"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Қызметкеріңізге шағым қалдырғым келеді",
+      "scenarioId": "SC35",
+      "terms": [
+        "қызметті",
+        "шағым"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Меня ударили, у виновного ваш полис",
+      "scenarioId": "SC12",
+      "terms": [
+        "полис",
+        "виновника"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Компания қызметкерлерін сақтандырғымыз келеді",
+      "scenarioId": "SC10",
+      "terms": [
+        "сақтандыру",
+        "қызметті",
+        "компания"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Сақтандыруды ұзартқым келеді",
+      "scenarioId": "SC27",
+      "terms": [
+        "сақтандыру",
+        "ұзартып"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Астанадағы серіктес емханалар тізімі қандай?",
+      "scenarioId": "SC23",
+      "terms": [
+        "Астане",
+        "емханада"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Покрывает ли страховка МРТ?",
+      "scenarioId": "SC22",
+      "terms": [
+        "страховка",
+        "покрывает",
+        "МРТ"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Какой адрес отделения в Шымкенте?",
+      "scenarioId": "SC33",
+      "terms": [
+        "адрес",
+        "Шымкенте"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Шымкенттегі бөлімшенің мекенжайы қандай?",
+      "scenarioId": "SC33",
+      "terms": [
+        "мекенжай",
+        "Шымкенте"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Я из компании, интересует корпоративное страхование",
+      "scenarioId": "SC10",
+      "terms": [
+        "страховка",
+        "компания",
+        "корпоративтік"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Корпоративтік сақтандыру қызықтырады",
+      "scenarioId": "SC10",
+      "terms": [
+        "сақтандыру",
+        "корпоративтік"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Нужна справка об оплате страховки",
+      "scenarioId": "SC39",
+      "terms": [
+        "страховка",
+        "оплате",
+        "справка"
+      ]
+    },
+    {
+      "lang": "ru",
+      "text": "Что такое франшиза?",
+      "scenarioId": "SC40",
+      "terms": [
+        "франшиза"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Франшиза деген не?",
+      "scenarioId": "SC40",
+      "terms": [
+        "франшиза"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "Электрондық сақтандыру картасын қайдан аламын?",
+      "scenarioId": "SC24",
+      "terms": [
+        "сақтандыру",
+        "карта",
+        "электрондық"
+      ]
+    },
+    {
+      "lang": "kk",
+      "text": "ЖКО кінәлісі сіздерде сақтандырылған, төлемді қалай аламын?",
+      "scenarioId": "SC12",
+      "terms": [
+        "сақтандыру",
+        "төлем",
+        "ЖКО"
+      ]
+    }
+  ]
+}

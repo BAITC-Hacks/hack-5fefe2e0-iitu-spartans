@@ -1,0 +1,62 @@
+{
+  "meta": { "dataset": "mini-kit — тестовая фикстура в формате scenarios.json стартового набора", "version": "test" },
+  "scenarios": [
+    {
+      "scenario_id": "SC01",
+      "name": "OGPO price quote",
+      "description": "Client wants the price of OGPO.",
+      "slots": { "required": ["region"], "optional": [] },
+      "examples": {
+        "ru": ["Хочу узнать цену ОГПО на машину", "Сколько стоит ОГПО в Алматы?"],
+        "kk": ["ОГПО бағасын есептеп беріңізші", "Көлік сақтандыруы қанша тұрады?"]
+      },
+      "responses": {
+        "ru": { "opening": "Посчитаю ОГПО. В каком городе машина?", "closing": "Полис на год выйдет {price} тенге. Оформим?" },
+        "kk": { "opening": "ОГПО бағасын есептейін. Көлік қай қалада?", "closing": "Бір жылдық полис {price} теңге болады." }
+      }
+    },
+    {
+      "scenario_id": "SC03",
+      "name": "CASCO consultation and quote",
+      "description": "Client asks about CASCO.",
+      "slots": { "required": ["product_type"], "optional": [] },
+      "examples": {
+        "ru": ["Интересует каско с франшизой", "Посчитайте КАСКО на новую машину"],
+        "kk": ["Жаңа көлікке КАСКО есептеп берсеңіз", "КАСКО сақтандыру керек"]
+      },
+      "responses": {
+        "ru": { "opening": "КАСКО считаем от стоимости машины. Франшизу рассмотрите?", "closing": "Полис КАСКО готов." },
+        "kk": { "opening": "КАСКО көлік құнынан есептеледі. Франшиза қарастырасыз ба?", "closing": "КАСКО полисі дайын." }
+      }
+    },
+    {
+      "scenario_id": "SC21",
+      "name": "Doctor appointment under DMS",
+      "description": "Client wants a doctor visit under DMS.",
+      "slots": { "required": ["policy_number"], "optional": [] },
+      "examples": {
+        "ru": ["Хочу записаться к врачу по ДМС", "По ДМС к кардиологу можно?"],
+        "kk": ["ДМС бойынша дәрігерге жазылғым келеді", "ДМС сақтандыру бар ма?"]
+      },
+      "responses": {
+        "ru": { "opening": "Запишу к врачу по полису ДМС.", "closing": "Вы записаны." },
+        "kk": { "opening": "ДМС полисі бойынша дәрігерге жазамын.", "closing": "Сіз жазылдыңыз." }
+      }
+    },
+    {
+      "scenario_id": "SC25",
+      "name": "Check policy validity",
+      "description": "Client asks whether the policy is valid.",
+      "slots": { "required": ["policy_number"], "optional": [] },
+      "examples": {
+        "ru": ["Действует ли мой полис?", "Проверьте полис, пожалуйста"],
+        "kk": ["Полисім жарамды ма?", "Сақтандыру полисін тексеріңізші"]
+      },
+      "responses": {
+        "ru": { "opening": "Назовите, пожалуйста, номер полиса.", "closing": "Полис действует." },
+        "kk": { "opening": "Полис нөмірін айтыңызшы.", "closing": "Полис жарамды." }
+      }
+    }
+  ],
+  "system_intents": []
+}
