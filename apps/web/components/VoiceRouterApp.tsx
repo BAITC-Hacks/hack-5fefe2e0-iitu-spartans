@@ -1,6 +1,7 @@
 "use client";
 
 import { INITIAL_CLIENT_STATE, type ClientDialogState, type Language, type TurnTrace } from "@voice-router/core";
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useI18n } from "../lib/i18n";
 import { AppHeader } from "./AppHeader";
@@ -200,6 +201,9 @@ export function VoiceRouterApp() {
             </h2>
             <div className="card__actions">
               {serverVoice && !call.active ? <CallStartButton onStart={startCall} disabled={pending || recognition.listening} /> : null}
+              <Link href="/live" className="button button--ghost button--small" title="Звонок через Gemini Live API: один открытый поток, перебивание">
+                Gemini Live
+              </Link>
               <button type="button" className="button button--ghost button--small" onClick={() => setSettingsOpen(true)}>
                 {t("settings.open")}
               </button>
