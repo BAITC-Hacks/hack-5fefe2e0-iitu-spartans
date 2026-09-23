@@ -87,10 +87,16 @@ describe("buildReply — ответ робота по действию поли�
 
   it("продолжение темы повторяет вопрос сценария, а не только «продолжаем»", () => {
     // Живой прогон 23.09: «По страховке.» после статуса заявления → «Спасибо, продолжаем.» — и тишина.
-    expect(buildReply({ kind: "continue", scenarioId: "SC30" }, "ru", CATALOG, LABELS)).toBe(
+    expect(buildReply({ kind: "continue", scenarioId: "SC30", filled: [] }, "ru", CATALOG, LABELS)).toBe(
       "Спасибо, продолжаем. Разберёмся. Когда был платёж и на какую сумму?",
     );
-    expect(buildReply({ kind: "continue", scenarioId: "SC30" }, "kk", CATALOG, LABELS)).toContain("Төлем қашан");
+    expect(buildReply({ kind: "continue", scenarioId: "SC30", filled: [] }, "kk", CATALOG, LABELS)).toContain("Төлем қашан");
+  });
+
+  it("продолжение с названными данными подтверждает приём и не переспрашивает то, что клиент только что сказал", () => {
+    const text = buildReply({ kind: "continue", scenarioId: "SC30", filled: ["payment_date"] }, "ru", CATALOG, LABELS);
+    expect(text).toMatch(/принял/);
+    expect(text).not.toMatch(/Когда был платёж/);
   });
 
   it("системное намерение — фраза из набора", () => {

@@ -73,7 +73,13 @@ describe("decide — политика принятия решений", () => {
   it("продолжение активного сценария не запускает маршрутизацию заново", () => {
     const state = { ...INITIAL_POLICY_STATE, activeScenario: "SC02" };
     const { action } = decide(decision([["SC01", 0.9]], { is_continuation: true }), state, priorityOf);
-    expect(action).toEqual({ kind: "continue", scenarioId: "SC02" });
+    expect(action).toEqual({ kind: "continue", scenarioId: "SC02", filled: [] });
+  });
+
+  it("продолжение с названными параметрами передаёт их имена в действие", () => {
+    const state = { ...INITIAL_POLICY_STATE, activeScenario: "SC17" };
+    const { action } = decide(decision([["SC17", 0.8]], { is_continuation: true, slots: { claim_number: "12345" } }), state, priorityOf);
+    expect(action).toEqual({ kind: "continue", scenarioId: "SC17", filled: ["claim_number"] });
   });
 
   it("непонятная реплика с is_continuation не «продолжает» тему: клиент получает вопрос, тема сохраняется", () => {

@@ -20,11 +20,12 @@ export function replyLanguage(language: Language): ReplyLanguage {
 
 const FALLBACK: Record<
   ReplyLanguage,
-  { handoff: string; continue: string; nextTopic: string; other: string; unknown: string; openQuestion: string }
+  { handoff: string; continue: string; accepted: string; nextTopic: string; other: string; unknown: string; openQuestion: string }
 > = {
   ru: {
     handoff: "Соединяю с оператором и передаю суть вопроса — повторять не придётся.",
     continue: "Спасибо, продолжаем.",
+    accepted: "Спасибо, принял. Проверяю.",
     nextTopic: "Затем вернёмся к вопросу: {label}.",
     other: "другое",
     unknown: "Не расслышал, повторите, пожалуйста.",
@@ -33,6 +34,7 @@ const FALLBACK: Record<
   kk: {
     handoff: "Операторға қосамын, сұрағыңыздың мәнін жеткіземін — қайталаудың қажеті жоқ.",
     continue: "Рақмет, жалғастырамыз.",
+    accepted: "Рақмет, қабылдадым. Тексеріп жатырмын.",
     nextTopic: "Содан кейін келесі сұраққа ораламыз: {label}.",
     other: "басқа нәрсе",
     unknown: "Естімей қалдым, қайталап жіберіңізші.",
@@ -77,7 +79,10 @@ export function buildReply(
     case "handoff":
       return FALLBACK[lang].handoff;
     case "continue":
-      // Продолжение темы повторяет вопрос сценария, чтобы клиент знал, что назвать: голое «продолжаем» — тупик разговора.
-      return `${FALLBACK[lang].continue} ${scenarioOpening(action.scenarioId, lang, catalog)}`;
+      // Клиент назвал данные — подтверждаем приём; ничего не назвал — повторяем вопрос сценария, чтобы он знал,
+      // что сказать. Голое «продолжаем» без вопроса — тупик, повтор вопроса после ответа — противоречие.
+      return action.filled.length > 0
+        ? FALLBACK[lang].accepted
+        : `${FALLBACK[lang].continue} ${scenarioOpening(action.scenarioId, lang, catalog)}`;
   }
 }

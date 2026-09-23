@@ -22,7 +22,7 @@ export type Priority = "normal" | "high" | "urgent";
 export type PolicyAction =
   | { kind: "run"; queue: string[] }
   | { kind: "clarify"; options: string[] }
-  | { kind: "continue"; scenarioId: string }
+  | { kind: "continue"; scenarioId: string; /** Какие параметры сценария клиент назвал этой репликой. */ filled: string[] }
   | { kind: "handoff"; reason: "low_confidence_twice" | "client_request" };
 
 export interface PolicyState {
@@ -61,7 +61,10 @@ export function decide(
   // решение принимается по порогам ниже, и клиент получает вопрос, а не «продолжаем».
   const primary = decision.scenarios[0]?.scenario_id;
   if (decision.is_continuation && state.activeScenario && !(primary !== undefined && isSystemIntent(primary))) {
-    return { action: { kind: "continue", scenarioId: state.activeScenario }, nextState: state };
+    return {
+      action: { kind: "continue", scenarioId: state.activeScenario, filled: Object.keys(decision.slots) },
+      nextState: state,
+    };
   }
 
   // Просьба клиента соединить с оператором исполняется без переспроса.
