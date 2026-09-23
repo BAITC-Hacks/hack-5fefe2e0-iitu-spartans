@@ -240,8 +240,11 @@ body { background: #f3f6f5; }
   .composer { gap: 6px; }
   .composer__input { padding: 12px 10px; font-size: 12px; }
   .composer .button { padding: 10px; font-size: 12px; }
-  .messages__empty { padding: 18px 12px; }
-  .messages__empty h3 { font-size: 21px; }
+  .messages__empty { padding: 12px; }
+  .messages__empty h3 { font-size: 19px; margin: 14px 0 8px; }
+  .messages__empty p { font-size: 12px; line-height: 1.6; }
+  .welcome-wave { height: 48px; transform: scale(.65); }
+  .welcome-languages { margin-top: 12px; }
   .trace-empty { padding: 26px 6px; }
   .trace-empty__steps { gap: 4px; }
   .trace-empty__steps span { font-size: 10px; padding: 5px 8px; }
