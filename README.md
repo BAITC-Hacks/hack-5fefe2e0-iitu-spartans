@@ -315,7 +315,7 @@ PostgreSQL 16, для сервиса выбора сценария — Python 3.
 | `ROUTER_REASONING_EFFORT` | `web`, `router` | глубина рассуждения моделей gpt-5; пусто — `none` (быстрее) |
 | `GEMINI_API_KEY`, `GEMINI_MODEL` | `web` | второй движок окна «Сравнить ChatGPT и Gemini» (раздел 12.1): Google Gemini через OpenAI-совместимый вход; пусто — окно сообщает, что ключ не задан; модель по умолчанию `gemini-3.8-flash` |
 | `STT_MODEL` | `web` | модель распознавания речи; пусто — `gpt-transcribe` |
-| `TTS_MODEL`, `TTS_VOICE` | `web` | модель и голос синтеза; пусто — `gpt-4o-mini-tts`, `coral` |
+| `TTS_MODEL`, `TTS_VOICE` | `web` | модель и голос синтеза; пусто — `gpt-4o-mini-tts`, `marin` |
 | `DATA_DIR`, `DATASET_DIR` | `web`, `router` | каталог стартового набора; пусто — `data/kit` (в контейнере `router` — `/data/kit`) |
 | `STT_GLOSSARY` | `web` | путь к словарю терминов; пусто — `packages/core/src/stt/stt-glossary.json` |
 | `KIT_DIR` | `pnpm glossary:build`, `pnpm stt:eval` | каталог набора для сборки словаря и оценки распознавания |
