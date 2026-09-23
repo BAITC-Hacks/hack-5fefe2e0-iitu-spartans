@@ -3,6 +3,7 @@
 import { INITIAL_CLIENT_STATE, type ClientDialogState, type Language, type TurnTrace } from "@voice-router/core";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Headphones, Settings2, RotateCcw, GitCompareArrows, Workflow, History, ChartNoAxesCombined, ScanSearch } from "lucide-react";
 import { useI18n } from "../lib/i18n";
 import { AppHeader } from "./AppHeader";
 import { CallScreen, CallStartButton } from "./CallScreen";
@@ -197,6 +198,7 @@ export function VoiceRouterApp() {
         <section className="card conversation-card" aria-labelledby="conversation-title">
           <div className="card__header">
             <h2 id="conversation-title" className="card__title">
+              <Headphones size={20} aria-hidden="true" />
               {t("conv.title")}
             </h2>
             <div className="card__actions">
@@ -205,9 +207,11 @@ export function VoiceRouterApp() {
                 Gemini Live
               </Link>
               <button type="button" className="button button--ghost button--small" onClick={() => setSettingsOpen(true)}>
+                <Settings2 size={15} aria-hidden="true" />
                 {t("settings.open")}
               </button>
               <button type="button" className="button button--ghost button--small" onClick={resetConversation} disabled={pending}>
+                <RotateCcw size={15} aria-hidden="true" />
                 {t("conv.reset")}
               </button>
             </div>
@@ -248,6 +252,7 @@ export function VoiceRouterApp() {
         <aside className="card supervisor-card" aria-labelledby="trace-title">
           <div className="card__header">
             <h2 id="trace-title" className="card__title">
+              <Workflow size={20} aria-hidden="true" />
               {t("trace.title")}
             </h2>
             <div className="card__actions">
@@ -259,6 +264,7 @@ export function VoiceRouterApp() {
                   onClick={() => void runCompare(shownIndex)}
                   disabled={!shownTrace || compare.status === "loading"}
                 >
+                  <GitCompareArrows size={16} aria-hidden="true" />
                   {t("compare.open")}
                 </button>
               ) : null}
@@ -267,12 +273,7 @@ export function VoiceRouterApp() {
           <div className="supervisor-scroll">
             {shownTrace ? <TracePanel trace={shownTrace} /> : (
               <div className="trace-empty">
-                <svg width="44" height="44" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-                  <rect x="5" y="17" width="12" height="14" rx="4" stroke="currentColor" strokeWidth="2" />
-                  <path d="M17 24h8m0 0V12h6m-6 12v12h6" stroke="currentColor" strokeWidth="2" />
-                  <rect x="31" y="7" width="12" height="10" rx="3" fill="currentColor" opacity=".8" />
-                  <rect x="31" y="31" width="12" height="10" rx="3" fill="currentColor" opacity=".3" />
-                </svg>
+                <span className="trace-empty__icon"><ScanSearch size={34} strokeWidth={1.5} aria-hidden="true" /></span>
                 <h3>{t("trace.welcome")}</h3>
                 <p>{t("trace.empty")}</p>
                 <div className="trace-empty__steps">
@@ -283,11 +284,11 @@ export function VoiceRouterApp() {
               </div>
             )}
             <details className="panel-disclosure">
-              <summary>{t("history.title")}<span className="disclosure-count">{traces.length}</span></summary>
+              <summary><History size={16} aria-hidden="true" />{t("history.title")}<span className="disclosure-count">{traces.length}</span></summary>
               <TurnHistory traces={traces} selected={shownIndex} onSelect={setSelectedTurn} />
             </details>
             <details className="panel-disclosure">
-              <summary>{t("stats.title")}</summary>
+              <summary><ChartNoAxesCombined size={16} aria-hidden="true" />{t("stats.title")}</summary>
               <SupervisorStats refreshKey={traces.length} />
             </details>
           </div>

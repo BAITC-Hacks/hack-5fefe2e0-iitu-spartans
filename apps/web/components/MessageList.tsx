@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { Bot, UserRound, TriangleAlert } from "lucide-react";
 import { useI18n } from "../lib/i18n";
 import type { ChatMessage } from "./types";
 
@@ -28,7 +29,7 @@ export function MessageList({ messages }: { messages: ChatMessage[] }) {
           if (message.role === "error") {
             return (
               <li key={message.id} className="bubble bubble--error" role="alert">
-                <span className="bubble__author">{t("conv.errorLabel")}</span>
+                <span className="bubble__author"><TriangleAlert size={13} aria-hidden="true" />{t("conv.errorLabel")}</span>
                 {t(message.key, message.vars)}
                 {message.detail ? ` ${message.detail}` : null}
               </li>
@@ -36,7 +37,10 @@ export function MessageList({ messages }: { messages: ChatMessage[] }) {
           }
           return (
             <li key={message.id} className={`bubble bubble--${message.role}`}>
-              <span className="bubble__author">{t(message.role === "client" ? "conv.client" : "conv.robot")}</span>
+              <span className="bubble__author">
+                {message.role === "client" ? <UserRound size={13} aria-hidden="true" /> : <Bot size={14} aria-hidden="true" />}
+                {t(message.role === "client" ? "conv.client" : "conv.robot")}
+              </span>
               {message.text}
             </li>
           );

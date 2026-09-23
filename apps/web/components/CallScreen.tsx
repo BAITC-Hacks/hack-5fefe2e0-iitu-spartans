@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type CSSProperties } from "react";
+import { Phone, PhoneOff, Mic } from "lucide-react";
 import { useI18n, type MessageKey } from "../lib/i18n";
 
 /**
@@ -52,34 +53,15 @@ function useElapsed(startedAt: number): number {
 }
 
 function PhoneIcon({ size = 20 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2Z"
-        fill="currentColor"
-      />
-    </svg>
-  );
+  return <Phone size={size} strokeWidth={1.8} aria-hidden="true" />;
 }
 
 function HangUpIcon() {
-  return (
-    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M12 9.5c-2.9 0-5.6.6-7.9 1.8a1.2 1.2 0 0 0-.66 1.07v2.4a1 1 0 0 0 1.3.95l3.05-.98a1 1 0 0 0 .69-.95v-1.72A13.4 13.4 0 0 1 12 11.6c1.25 0 2.45.17 3.52.47v1.72a1 1 0 0 0 .69.95l3.05.98a1 1 0 0 0 1.3-.95v-2.4a1.2 1.2 0 0 0-.66-1.07A17.6 17.6 0 0 0 12 9.5Z"
-        fill="currentColor"
-      />
-    </svg>
-  );
+  return <PhoneOff size={26} aria-hidden="true" />;
 }
 
 function MicIcon() {
-  return (
-    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor" />
-      <path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
+  return <Mic size={44} strokeWidth={1.6} aria-hidden="true" />;
 }
 
 /** Содержимое центра шара по фазе: у каждой фазы свой знак, а не только своя анимация. */

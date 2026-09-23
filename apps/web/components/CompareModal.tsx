@@ -1,6 +1,7 @@
 "use client";
 
 import { useI18n, type MessageKey } from "../lib/i18n";
+import { CircleCheck, GitCompareArrows, LoaderCircle, RotateCcw, Cpu, Clock3, TriangleAlert } from "lucide-react";
 import type { CompareResponse, EngineId, EngineResult } from "./compare-client";
 import { Modal } from "./Modal";
 import { ScenarioCard } from "./ScenarioCard";
@@ -29,20 +30,30 @@ const ENGINE_LABEL: Record<EngineId, MessageKey> = { openai: "engine.openai", ge
 /** Переменная окружения, включающая движок: окно называет её, когда ключа нет, вместо пустой колонки. */
 const ENGINE_ENV: Record<EngineId, string> = { openai: "OPENAI_API_KEY", gemini: "GEMINI_API_KEY" };
 
+function engineErrorLabel(error: string): MessageKey {
+  if (/IP address restriction/i.test(error)) return "compare.errorIp";
+  if (/\b40[13]\b/.test(error)) return "compare.errorAccess";
+  if (/\b429\b/.test(error)) return "compare.errorLimit";
+  return "compare.errorProvider";
+}
+
 function EngineColumn({ engine, names }: { engine: EngineResult; names: Record<string, string> }) {
   const { t } = useI18n();
   const { decision } = engine;
   return (
     <section className={`engine-card engine-card--${engine.id}`} aria-label={t(ENGINE_LABEL[engine.id])}>
       <header className="engine-card__head">
-        <span className="engine-card__name">{t(ENGINE_LABEL[engine.id])}</span>
+        <span className="engine-card__name"><Cpu size={18} aria-hidden="true" />{t(ENGINE_LABEL[engine.id])}</span>
         {engine.model ? <span className="engine-card__model">{engine.model}</span> : null}
       </header>
       {!engine.available ? <p className="hint">{t("compare.unavailable", { env: ENGINE_ENV[engine.id] })}</p> : null}
       {engine.error ? (
-        <p className="error-box" role="alert">
-          {engine.error}
-        </p>
+        <div className="provider-error" role="alert">
+          <TriangleAlert size={24} aria-hidden="true" />
+          <strong>{t("compare.noDecision")}</strong>
+          <p>{t(engineErrorLabel(engine.error))}</p>
+          <details><summary>{t("compare.diagnostics")}</summary><pre>{engine.error}</pre></details>
+        </div>
       ) : null}
       {decision ? (
         <>
@@ -75,6 +86,7 @@ function EngineColumn({ engine, names }: { engine: EngineResult; names: Record<s
             <p className="muted">{t("trace.noAlternatives")}</p>
           )}
           <p className="engine-card__latency">
+            <Clock3 size={15} aria-hidden="true" />
             <b>{engine.latencyMs}</b> {t("compare.ms")} · {t("compare.attempts", { n: engine.attempts })} ·{" "}
             {t(`dialogLang.${decision.language}`)}
           </p>
@@ -106,7 +118,7 @@ export function CompareModal({ open, state, onClose, onRerun }: CompareModalProp
         ? { className: "agree", text: t("compare.agree") }
         : state.data.agree === false
           ? { className: "disagree", text: t("compare.disagree") }
-          : { className: "none", text: t("compare.noVerdict") }
+          : { className: "none", text: t("compare.incomplete") }
       : state.status === "loading"
         ? { className: "none", text: t("compare.loading") }
         : null;
@@ -121,6 +133,7 @@ export function CompareModal({ open, state, onClose, onRerun }: CompareModalProp
       footer={
         <>
           <button type="button" className="button button--ghost" onClick={onRerun} disabled={state.status === "loading"}>
+            <RotateCcw size={16} aria-hidden="true" />
             {t("compare.rerun")}
           </button>
           <button type="button" className="button" onClick={onClose}>
@@ -137,6 +150,7 @@ export function CompareModal({ open, state, onClose, onRerun }: CompareModalProp
       ) : null}
       {verdict ? (
         <p className={`compare-verdict compare-verdict--${verdict.className}`} aria-live="polite">
+          {state.status === "loading" ? <LoaderCircle className="icon-spin" size={21} aria-hidden="true" /> : verdict.className === "agree" ? <CircleCheck size={21} aria-hidden="true" /> : <GitCompareArrows size={21} aria-hidden="true" />}
           {verdict.text}
         </p>
       ) : null}
@@ -144,6 +158,11 @@ export function CompareModal({ open, state, onClose, onRerun }: CompareModalProp
         <p className="error-box" role="alert">
           {t("compare.error")}: {failureText(t, state.failure)}
         </p>
+      ) : null}
+      {state.status === "loading" ? (
+        <div className="compare-grid compare-loading" aria-hidden="true">
+          {["openai", "gemini"].map((engine) => <div className="engine-skeleton" key={engine}><span /><span /><span /></div>)}
+        </div>
       ) : null}
       {state.status === "done" ? (
         <div className="compare-grid">

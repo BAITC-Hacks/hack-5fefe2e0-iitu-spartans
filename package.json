@@ -8,6 +8,8 @@
     "node": ">=24"
   },
   "scripts": {
+    "dev:web": "node scripts/dev-web.mjs",
+    "smoke": "node scripts/smoke.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc -p tsconfig.json --noEmit",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
+import { X } from "lucide-react";
 
 /**
  * Модальное окно на нативном <dialog>: фокус, Escape и подложка — от браузера, без библиотек (ADR-014).
@@ -44,7 +45,7 @@ export function Modal({ open, title, closeLabel, onClose, wide, children, footer
         <header className="modal__header">
           <h2 className="modal__title">{title}</h2>
           <button type="button" className="modal__close" onClick={() => ref.current?.close()} aria-label={closeLabel}>
-            <span aria-hidden="true">×</span>
+            <X size={20} aria-hidden="true" />
           </button>
         </header>
         <div className="modal__body">{children}</div>
