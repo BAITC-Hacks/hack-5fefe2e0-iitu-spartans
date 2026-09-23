@@ -233,14 +233,14 @@ corepack enable        # включает pnpm нужной версии из п
 pnpm verify            # установка по lock-файлу, проверка типов, тесты
 ```
 
-Ожидаемый результат: `Test Files 8 passed`, `Tests 57 passed`, проверка типов без ошибок.
+Ожидаемый результат: `Test Files 9 passed`, `Tests 66 passed`, проверка типов без ошибок.
 
 Тесты сервиса выбора сценария (Python 3.11+, без сети и без ключа — клиент модели подменяется):
 
 ```bash
 cd backend
 python3 -m venv .venv && .venv/bin/pip install -r requirements-dev.txt
-.venv/bin/python -m pytest      # ожидается: 65 passed
+.venv/bin/python -m pytest      # ожидается: 69 passed
 ```
 
 Та же цепочка описана для GitHub Actions в `.github/workflows/ci.yml`. Автоматический запуск в
@@ -338,8 +338,9 @@ PostgreSQL 16. Ключ OpenAI API нужен только для живого �
 | Демо | `demoDecision` ядра, без модели | нет ни сервиса, ни ключа (Положение §5.6.6) |
 
 Сбой сервиса не обрывает разговор: `web` берёт решение резервным путём, причина сбоя видна в трассировке
-(`trace.error`). После сбоя `web` 30 с не обращается к сервису: остановленный контейнер иначе задерживал бы
-каждый ход (имя `router` не разрешается ~5 с).
+(`trace.error`). Если сервис не отвечает (имя не разрешилось, соединение отклонено, таймаут запроса), `web` 30 с
+не обращается к нему: остановленный контейнер иначе задерживал бы каждый ход (имя `router` не разрешается ~5 с).
+Ответ сервиса с HTTP-ошибкой (502, 503, 504) паузу не включает: следующий ход снова идёт в сервис (ADR-015).
 
 **Контракт.** Ответ совпадает с `RouteDecision` из `packages/core/src/contracts/route-decision.ts` и дополнен полями
 для панели трассировки: `quote` у каждого сценария, `situation`, `response_language`, `latency_ms`, `model`, `usage`.
@@ -356,10 +357,11 @@ curl -X POST localhost:8000/route -d '{"utterance":"Когда будет вып
 ```
 
 ```json
-{"scenarios":[{"scenario_id":"SC17","confidence":0.98,"reason":"Asks status of payout","quote":"Когда будет выплата?"}],
- "alternatives":[],"language":"ru","response_language":"ru","situation":"existing claim payout status",
- "slots":{},"is_continuation":false,"latency_ms":2526,"model":"gpt-5.4-mini",
- "usage":{"input":8668,"cached":8448,"output":74}}
+{"scenarios":[{"scenario_id":"SC17","confidence":0.98,
+   "reason":"Фраза «Когда будет выплата?» — это запрос статуса существующего заявления.","quote":"Когда будет выплата?"}],
+ "alternatives":[],"language":"ru","response_language":"ru","situation":"later claim status requested",
+ "slots":{},"is_continuation":false,"latency_ms":1905,"model":"gpt-5.4-mini",
+ "usage":{"input":8721,"cached":8448,"output":87}}
 ```
 
 | Код | Когда |
@@ -394,6 +396,7 @@ backend/.venv/bin/python scripts/route_batch.py
 | v0 | gpt-4.1-mini | 0.971 | 0.981 | 1.000 | 1736 / 2461 |
 | v4, 2 прогона | gpt-5.4-mini | 1.000 / 1.000 | 0.981 / 1.000 | 0.962 / 1.000 | 1476 / 2012 · 1585 / 2277 |
 | v5 (сервис /route), 2 прогона | gpt-5.4-mini | 1.000 / 1.000 | 0.981 / 0.990 | 1.000 / 0.962 | 1603 / 2373 · 1656 / 2544 |
+| v6 (обоснование на русском), 2 прогона | gpt-5.4-mini | 1.000 / 1.000 | 0.990 / 0.990 | 0.962 / 0.962 | 1813 / 2517 · 1852 / 2834 |
 
 Dev-набор мал (104 реплики, 7 смешанных, 13 мультиинтентов): 1.000 на нём не гарантирует того же на скрытых
 репликах жюри.
