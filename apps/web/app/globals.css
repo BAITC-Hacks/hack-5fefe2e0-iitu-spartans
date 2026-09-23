@@ -1377,3 +1377,181 @@ select {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* ---------- Модальные окна ---------- */
+/*
+ * Нативный <dialog>: подложка и фокус от браузера. Само окно прозрачное без отступов, чтобы клик по подложке
+ * приходил на <dialog>, а панель внутри держала палитру карточек.
+ */
+.card__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.modal {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  width: 100%;
+  max-width: min(720px, calc(100vw - 32px));
+  color: var(--color-ink);
+}
+
+.modal--wide {
+  max-width: min(1120px, calc(100vw - 32px));
+}
+
+.modal::backdrop {
+  background: rgba(7, 18, 34, 0.55);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+.modal__panel {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 20px 24px 24px;
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+}
+
+.modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.modal__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.modal__close {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-gray);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modal__close:hover {
+  background: var(--color-border);
+}
+
+.modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+/* ---------- Окно сравнения движков ---------- */
+
+.compare-utterance {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--color-gray);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.compare-verdict {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-weight: 800;
+}
+
+.compare-verdict--agree {
+  background: var(--color-mint);
+  color: var(--color-primary);
+}
+
+.compare-verdict--disagree {
+  background: var(--color-warn-bg);
+  color: var(--color-warn);
+}
+
+.compare-verdict--none {
+  background: var(--color-gray);
+  color: var(--color-muted);
+}
+
+.compare-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 760px) {
+  .compare-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Колонка движка: цвет верхней кромки — фирменный цвет поставщика, чтобы колонки читались с расстояния. */
+.engine-card {
+  min-width: 0;
+  padding: 14px 16px 16px;
+  border: 1px solid var(--color-border);
+  border-top-width: 4px;
+  border-radius: var(--radius-md);
+}
+
+.engine-card--openai {
+  border-top-color: #10a37f;
+}
+
+.engine-card--gemini {
+  border-top-color: #4285f4;
+}
+
+.engine-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.engine-card__name {
+  font-weight: 800;
+}
+
+.engine-card__model {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--color-gray);
+}
+
+.engine-card__latency {
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.engine-card__latency b {
+  font-size: 22px;
+  color: var(--color-ink);
+}
+
+.compare-hint {
+  margin: 14px 0 0;
+  font-size: 13px;
+}
