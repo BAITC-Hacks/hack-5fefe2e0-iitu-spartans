@@ -76,6 +76,23 @@ describe("buildReply — ответ робота по действию поли�
     }
   });
 
+  it("уточнение с одним вариантом — «или другое», без вариантов — открытый вопрос, идентификаторы не звучат", () => {
+    expect(buildReply({ kind: "clarify", options: ["SC30"] }, "ru", CATALOG, LABELS)).toBe(
+      "Уточните, пожалуйста: вы хотите разобраться с оплатой без полиса или другое?",
+    );
+    const open = buildReply({ kind: "clarify", options: [] }, "kk", CATALOG, LABELS);
+    expect(open).not.toMatch(/[{}]|SYS_|SC\d/);
+    expect(open.length).toBeGreaterThan(10);
+  });
+
+  it("продолжение темы повторяет вопрос сценария, а не только «продолжаем»", () => {
+    // Живой прогон 23.09: «По страховке.» после статуса заявления → «Спасибо, продолжаем.» — и тишина.
+    expect(buildReply({ kind: "continue", scenarioId: "SC30" }, "ru", CATALOG, LABELS)).toBe(
+      "Спасибо, продолжаем. Разберёмся. Когда был платёж и на какую сумму?",
+    );
+    expect(buildReply({ kind: "continue", scenarioId: "SC30" }, "kk", CATALOG, LABELS)).toContain("Төлем қашан");
+  });
+
   it("системное намерение — фраза из набора", () => {
     expect(buildReply({ kind: "run", queue: ["SYS_OUT_OF_SCOPE"] }, "ru", CATALOG, LABELS)).toBe("С этим я не помогу.");
   });

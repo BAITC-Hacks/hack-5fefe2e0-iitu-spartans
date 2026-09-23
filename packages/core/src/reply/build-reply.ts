@@ -67,13 +67,17 @@ export function buildReply(
       return second ? `${opening} ${FALLBACK[lang].nextTopic.replace("{label}", label(second))}` : opening;
     }
     case "clarify": {
+      const [optionA, optionB] = action.options;
+      // Без хотя бы одного настоящего варианта шаблон «вы хотите A или B?» превращается в чтение полей — спрашиваем открыто.
+      if (!optionA) return FALLBACK[lang].openQuestion;
       const template = catalog.system_intents.find((i) => i.id === "SYS_UNCLEAR")?.response?.[lang];
       if (!template) return FALLBACK[lang].unknown;
-      return template.replace("{option_a}", label(action.options[0])).replace("{option_b}", label(action.options[1]));
+      return template.replace("{option_a}", label(optionA)).replace("{option_b}", label(optionB));
     }
     case "handoff":
       return FALLBACK[lang].handoff;
     case "continue":
-      return FALLBACK[lang].continue;
+      // Продолжение темы повторяет вопрос сценария, чтобы клиент знал, что назвать: голое «продолжаем» — тупик разговора.
+      return `${FALLBACK[lang].continue} ${scenarioOpening(action.scenarioId, lang, catalog)}`;
   }
 }
