@@ -11,10 +11,14 @@ dist/
 coverage/
 .pnpm-store/
 
-# Python (скрипт оценки организаторов)
+# Python (сервис выбора сценария backend/, скрипт оценки организаторов)
 __pycache__/
 *.pyc
 .venv/
+.pytest_cache/
+
+# Прогоны scripts/route_batch.py: предсказания и ответы модели по dev-набору
+runs/
 
 # Отчёты тестов
 playwright-report/

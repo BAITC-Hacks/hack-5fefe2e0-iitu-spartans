@@ -1,5 +1,6 @@
 # Запуск всей системы одной командой: docker compose up --build
 # Приложение: http://localhost:3000 · проверка готовности: http://localhost:3000/api/health
+# Сервис выбора сценария: http://localhost:8000 · проверка готовности: http://localhost:8000/health
 
 services:
   db:
@@ -23,12 +24,40 @@ services:
       DATABASE_URL: postgres://voice_router:voice_router@db:5432/voice_router
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       DEMO_MODE: ${DEMO_MODE:-mock}
+      # Основной путь выбора сценария. Если сервис недоступен, web решает сам (маршрутизатор ядра или демо).
+      ROUTER_URL: http://router:8000
     ports:
       - "3000:3000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/api/health').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
     # Приложение стартует только после того, как база прошла проверку готовности.
+    # От router не зависит: его недоступность не мешает старту и не задерживает ход диалога.
     depends_on:
       db:
         condition: service_healthy
+
+  router:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      # Без ключа сервис стартует: /health сообщает model_key=false, POST /route отвечает 503.
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ROUTER_MODEL: ${ROUTER_MODEL:-}
+      DATASET_DIR: /data/kit
+    volumes:
+      - ./data/kit:/data/kit:ro
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=2)"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
 
 volumes:
   db-data:
