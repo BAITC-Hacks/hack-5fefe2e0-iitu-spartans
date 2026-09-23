@@ -8,11 +8,20 @@ export function AppHeader() {
   return (
     <header className="app-header">
       <div className="app-header__inner">
-        <div>
-          <h1 className="app-header__title">{t("app.title")}</h1>
-          <p className="app-header__subtitle">{t("app.subtitle")}</p>
+        <div className="app-brand">
+          <span className="app-brand__mark" aria-hidden="true">
+            <svg width="30" height="30" viewBox="0 0 32 32" fill="none">
+              <path d="M5 13v6M11 7v18M17 3v26M23 9v14M29 13v6" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+            </svg>
+          </span>
+          <div>
+            <h1 className="app-header__title">{t("app.title")}</h1>
+            <p className="app-header__subtitle">{t("app.subtitle")}</p>
+          </div>
         </div>
-        <LocaleSwitcher />
+        <div className="app-header__tools">
+          <LocaleSwitcher />
+        </div>
       </div>
     </header>
   );

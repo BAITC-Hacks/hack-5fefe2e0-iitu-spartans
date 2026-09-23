@@ -193,7 +193,7 @@ export function VoiceRouterApp() {
     <>
       <AppHeader />
       <main className="app-main">
-        <section className="card" aria-labelledby="conversation-title">
+        <section className="card conversation-card" aria-labelledby="conversation-title">
           <div className="card__header">
             <h2 id="conversation-title" className="card__title">
               {t("conv.title")}
@@ -241,7 +241,7 @@ export function VoiceRouterApp() {
             </>
           )}
         </section>
-        <aside className="card" aria-labelledby="trace-title">
+        <aside className="card supervisor-card" aria-labelledby="trace-title">
           <div className="card__header">
             <h2 id="trace-title" className="card__title">
               {t("trace.title")}
@@ -260,12 +260,33 @@ export function VoiceRouterApp() {
               ) : null}
             </div>
           </div>
-          {shownTrace ? <TracePanel trace={shownTrace} /> : <p className="muted">{t("trace.empty")}</p>}
-          <section className="section">
-            <h3 className="section__title">{t("history.title")}</h3>
-            <TurnHistory traces={traces} selected={shownIndex} onSelect={setSelectedTurn} />
-          </section>
-          <SupervisorStats refreshKey={traces.length} />
+          <div className="supervisor-scroll">
+            {shownTrace ? <TracePanel trace={shownTrace} /> : (
+              <div className="trace-empty">
+                <svg width="44" height="44" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                  <rect x="5" y="17" width="12" height="14" rx="4" stroke="currentColor" strokeWidth="2" />
+                  <path d="M17 24h8m0 0V12h6m-6 12v12h6" stroke="currentColor" strokeWidth="2" />
+                  <rect x="31" y="7" width="12" height="10" rx="3" fill="currentColor" opacity=".8" />
+                  <rect x="31" y="31" width="12" height="10" rx="3" fill="currentColor" opacity=".3" />
+                </svg>
+                <h3>{t("trace.welcome")}</h3>
+                <p>{t("trace.empty")}</p>
+                <div className="trace-empty__steps">
+                  <span>{t("trace.scenarios")}</span>
+                  <span>{t("trace.alternatives")}</span>
+                  <span>{t("trace.latency")}</span>
+                </div>
+              </div>
+            )}
+            <details className="panel-disclosure">
+              <summary>{t("history.title")}<span className="disclosure-count">{traces.length}</span></summary>
+              <TurnHistory traces={traces} selected={shownIndex} onSelect={setSelectedTurn} />
+            </details>
+            <details className="panel-disclosure">
+              <summary>{t("stats.title")}</summary>
+              <SupervisorStats refreshKey={traces.length} />
+            </details>
+          </div>
         </aside>
       </main>
       <SettingsModal
