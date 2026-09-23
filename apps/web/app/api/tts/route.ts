@@ -10,6 +10,7 @@ export const dynamic = "force-dynamic";
 const ENDPOINT = "https://api.openai.com/v1/audio/speech";
 const MAX_TEXT = 600;
 
+/** Манера речи по умолчанию — на языке ответа. TTS_INSTRUCTIONS заменяет её одной строкой для обоих языков. */
 const INSTRUCTIONS: Record<string, string> = {
   kk: "Сен сақтандыру компаниясы байланыс орталығының сыпайы операторысың. Қазақ тілінде анық, жылы және қысқа сөйле.",
   ru: "Ты вежливый оператор контакт-центра страховой компании. Говори по-русски чётко, тепло и без спешки.",
@@ -30,7 +31,7 @@ async function synthesize(rawText: unknown, rawLang: unknown): Promise<Response>
       model: process.env.TTS_MODEL || "gpt-4o-mini-tts",
       voice: process.env.TTS_VOICE || "coral",
       input: text,
-      instructions: INSTRUCTIONS[language],
+      instructions: process.env.TTS_INSTRUCTIONS || INSTRUCTIONS[language],
       response_format: "mp3",
     }),
     signal: AbortSignal.timeout(15_000),

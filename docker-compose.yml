@@ -26,6 +26,7 @@ services:
       STT_MODEL: ${STT_MODEL:-}
       TTS_MODEL: ${TTS_MODEL:-}
       TTS_VOICE: ${TTS_VOICE:-}
+      TTS_INSTRUCTIONS: ${TTS_INSTRUCTIONS:-}
       # Поставщик модели маршрутизатора ядра (резервный путь); пусто — OpenAI с OPENAI_API_KEY.
       ROUTER_BASE_URL: ${ROUTER_BASE_URL:-}
       ROUTER_API_KEY: ${ROUTER_API_KEY:-}
