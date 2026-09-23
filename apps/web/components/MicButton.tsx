@@ -1,6 +1,7 @@
 "use client";
 
 import { useI18n } from "../lib/i18n";
+import { Mic, Square } from "lucide-react";
 
 interface MicButtonProps {
   listening: boolean;
@@ -19,15 +20,7 @@ export function MicButton({ listening, disabled, onStart, onStop }: MicButtonPro
       disabled={disabled}
       onClick={listening ? onStop : onStart}
     >
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor" />
-        <path
-          d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-      </svg>
+      {listening ? <Square size={26} aria-hidden="true" /> : <Mic size={26} aria-hidden="true" />}
       <span>{listening ? t("mic.stop") : t("mic.start")}</span>
     </button>
   );

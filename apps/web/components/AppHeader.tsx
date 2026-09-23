@@ -1,6 +1,7 @@
 "use client";
 
 import { useI18n } from "../lib/i18n";
+import { AudioLines } from "lucide-react";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 
 export function AppHeader() {
@@ -10,9 +11,7 @@ export function AppHeader() {
       <div className="app-header__inner">
         <div className="app-brand">
           <span className="app-brand__mark" aria-hidden="true">
-            <svg width="30" height="30" viewBox="0 0 32 32" fill="none">
-              <path d="M5 13v6M11 7v18M17 3v26M23 9v14M29 13v6" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-            </svg>
+            <AudioLines size={28} strokeWidth={1.8} />
           </span>
           <div>
             <h1 className="app-header__title">{t("app.title")}</h1>

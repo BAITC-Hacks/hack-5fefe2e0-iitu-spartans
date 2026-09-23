@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { SendHorizontal } from "lucide-react";
 import { useI18n } from "../lib/i18n";
 
 /** Текстовый ввод — резервный канал на случай, если микрофон недоступен или шумно. */
@@ -32,6 +33,7 @@ export function Composer({ disabled, onSend }: { disabled: boolean; onSend: (tex
       />
       <button type="submit" className="button" disabled={disabled || text.trim() === ""}>
         {t("conv.send")}
+        <SendHorizontal size={17} aria-hidden="true" />
       </button>
     </form>
   );
