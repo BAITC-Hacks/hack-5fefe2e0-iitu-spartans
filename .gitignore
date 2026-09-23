@@ -29,3 +29,7 @@ Thumbs.db
 
 # Логи
 *.log
+
+# Next.js генерирует при сборке
+next-env.d.ts
+*.tsbuildinfo
