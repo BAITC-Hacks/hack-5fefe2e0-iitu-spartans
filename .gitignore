@@ -1,0 +1,31 @@
+# Секреты и локальное окружение
+.env
+.env.*
+!.env.example
+
+# Зависимости и сборка
+node_modules/
+.next/
+.turbo/
+dist/
+coverage/
+.pnpm-store/
+
+# Python (скрипт оценки организаторов)
+__pycache__/
+*.pyc
+.venv/
+
+# Отчёты тестов
+playwright-report/
+test-results/
+
+# Служебные файлы ОС и редакторов
+.DS_Store
+__MACOSX/
+Thumbs.db
+.idea/
+.vscode/
+
+# Логи
+*.log

@@ -1,0 +1,6 @@
+# Единые окончания строк на всех ОС: проект собирается в Linux-контейнере
+* text=auto eol=lf
+*.sh text eol=lf
+*.png binary
+*.jpg binary
+*.zip binary
