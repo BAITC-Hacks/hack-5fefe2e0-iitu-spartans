@@ -1,16 +1,26 @@
 "use client";
 
-import { INITIAL_CLIENT_STATE, type ClientDialogState, type TurnTrace } from "@voice-router/core";
+import { INITIAL_CLIENT_STATE, type ClientDialogState, type Language, type TurnTrace } from "@voice-router/core";
 import { useCallback, useRef, useState } from "react";
 import { useI18n } from "../lib/i18n";
 import { AppHeader } from "./AppHeader";
 import { Composer } from "./Composer";
 import { MessageList } from "./MessageList";
-import { StatusLine } from "./StatusLine";
 import { TracePanel } from "./TracePanel";
 import { TurnHistory } from "./TurnHistory";
 import { postTurn, type TurnFailure } from "./turn-client";
 import type { ChatMessage, VoiceStatus } from "./types";
+import { useSpeechRecognition, type RecognitionLang } from "./use-speech-recognition";
+import { useSpeechSynthesis } from "./use-speech-synthesis";
+import { VoiceBar } from "./VoiceBar";
+
+// Смешанную реплику озвучиваем языком, на котором клиент говорил в микрофон:
+// так ответ звучит тем голосом, который клиент только что выбрал сам.
+function speechLangFor(language: Language, recognitionLang: RecognitionLang): string {
+  if (language === "kk") return "kk-KZ";
+  if (language === "ru") return "ru-RU";
+  return recognitionLang;
+}
 
 function failureMessage(id: number, failure: TurnFailure): ChatMessage {
   switch (failure.kind) {
@@ -36,7 +46,10 @@ export function VoiceRouterApp() {
   const [pending, setPending] = useState(false);
   // null — панель следит за последним ходом; число — супервизор открыл прошлый ход из истории.
   const [selectedTurn, setSelectedTurn] = useState<number | null>(null);
+  const [recognitionLang, setRecognitionLang] = useState<RecognitionLang>("ru-RU");
+  const [speakReplies, setSpeakReplies] = useState(true);
 
+  const synthesis = useSpeechSynthesis();
   const nextId = useRef(1);
   // Ref, а не state: голосовой колбэк может прийти раньше перерисовки, и второй запрос не должен уйти.
   const pendingRef = useRef(false);
@@ -61,23 +74,45 @@ export function VoiceRouterApp() {
         setTraces((current) => [...current, trace]);
         setSelectedTurn(null);
         pushMessage({ id: nextId.current++, role: "bot", text: reply.text });
+        if (speakReplies) synthesis.speak(reply.text, speechLangFor(reply.language, recognitionLang));
       } else {
         pushMessage(failureMessage(nextId.current++, result.failure));
       }
       pendingRef.current = false;
       setPending(false);
     },
-    [dialogState, pushMessage],
+    [dialogState, pushMessage, speakReplies, synthesis.speak, recognitionLang],
   );
 
+  const recognition = useSpeechRecognition({
+    lang: recognitionLang,
+    onFinal: (transcript, sttMs) => void sendUtterance(transcript, sttMs),
+    onError: (code) => pushMessage({ id: nextId.current++, role: "error", key: "mic.error", vars: { code } }),
+  });
+
+  const startListening = useCallback(() => {
+    // Робот замолкает, когда клиент начинает говорить: иначе микрофон запишет его собственный голос.
+    synthesis.cancel();
+    recognition.start();
+  }, [synthesis.cancel, recognition.start]);
+
   const resetConversation = useCallback(() => {
+    synthesis.cancel();
+    recognition.stop();
     setDialogState(INITIAL_CLIENT_STATE);
     setMessages([]);
     setTraces([]);
     setSelectedTurn(null);
-  }, []);
+  }, [synthesis.cancel, recognition.stop]);
 
-  const status: VoiceStatus = pending ? "thinking" : "idle";
+  // Приоритет статусов: слушание важнее ожидания ответа, ожидание важнее озвучивания.
+  const status: VoiceStatus = recognition.listening
+    ? "listening"
+    : pending
+      ? "thinking"
+      : synthesis.speaking
+        ? "speaking"
+        : "idle";
   const shownIndex = selectedTurn ?? traces.length - 1;
   const shownTrace = traces[shownIndex];
 
@@ -94,11 +129,25 @@ export function VoiceRouterApp() {
               {t("conv.reset")}
             </button>
           </div>
-          <div className="voice-bar">
-            <div className="voice-bar__controls">
-              <StatusLine status={status} />
-            </div>
-          </div>
+          <VoiceBar
+            status={status}
+            recognitionSupported={recognition.supported}
+            synthesisSupported={synthesis.supported}
+            listening={recognition.listening}
+            busy={pending}
+            lang={recognitionLang}
+            onLangChange={setRecognitionLang}
+            speakReplies={speakReplies}
+            onSpeakRepliesChange={(value) => {
+              setSpeakReplies(value);
+              if (!value) synthesis.cancel();
+            }}
+            showNoKazakhVoice={
+              recognitionLang === "kk-KZ" && synthesis.supported === true && synthesis.voicesLoaded && !synthesis.hasKazakhVoice
+            }
+            onStart={startListening}
+            onStop={recognition.stop}
+          />
           <MessageList messages={messages} />
           <Composer disabled={pending} onSend={(text) => void sendUtterance(text)} />
         </section>
