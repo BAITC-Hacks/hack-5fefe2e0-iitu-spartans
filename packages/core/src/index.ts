@@ -7,6 +7,16 @@ export {
   ScenarioScoreSchema,
 } from "./contracts/route-decision";
 export type { ParseResult, RouteDecision } from "./contracts/route-decision";
+export { INITIAL_CLIENT_STATE } from "./contracts/turn";
+export type {
+  ClientDialogState,
+  DialogTurn,
+  Language,
+  TurnLatency,
+  TurnRequest,
+  TurnResponse,
+  TurnTrace,
+} from "./contracts/turn";
 export {
   CLARIFY_THRESHOLD,
   decide,
