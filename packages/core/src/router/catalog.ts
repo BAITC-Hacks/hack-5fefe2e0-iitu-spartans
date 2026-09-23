@@ -19,11 +19,20 @@ export const CatalogScenarioSchema = z.object({
   not_this_if: z.array(NotThisIfSchema),
   priority: z.enum(["normal", "high", "urgent"]),
   examples: z.object({ ru: z.array(z.string()), kk: z.array(z.string()) }),
+  /** Фразы ответа из набора: начальная и заключительная, на русском и казахском. */
+  responses: z
+    .object({
+      ru: z.object({ opening: z.string(), closing: z.string() }),
+      kk: z.object({ opening: z.string(), closing: z.string() }),
+    })
+    .optional(),
 });
 
 export const SystemIntentSchema = z.object({
   id: z.enum(["SYS_OUT_OF_SCOPE", "SYS_UNCLEAR", "SYS_GOODBYE"]),
   description: z.string().min(1),
+  /** Фраза ответа; у SYS_UNCLEAR — шаблон с {option_a} и {option_b}. */
+  response: z.object({ ru: z.string(), kk: z.string() }).optional(),
 });
 
 export const CatalogSchema = z.object({
