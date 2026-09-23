@@ -22,6 +22,7 @@ SlotName = Enum("SlotName", {s: s for s in _ds.slots}, type=str)
 # --- схема ответа LLM (strict JSON schema) ---
 
 class _Pick(BaseModel):
+    quote: str  # фрагмент реплики с этим запросом: фиксирует порядок упоминания
     scenario_id: RouteId
     confidence: float
     reason: str
@@ -38,6 +39,7 @@ class _SlotValue(BaseModel):
 
 
 class _LLMRoute(BaseModel):
+    situation: str  # короткий разбор до выбора: когда/где/роль/есть ли полис
     language: Literal["ru", "kk", "mixed"]
     response_language: Literal["ru", "kk"]
     is_continuation: bool
@@ -59,6 +61,7 @@ class RouterResult(BaseModel):
     alternatives: list[ScenarioPick]
     language: Literal["ru", "kk", "mixed"]
     response_language: Literal["ru", "kk"]
+    situation: str
     slots: dict[str, str]
     is_continuation: bool
     latency_ms: int
@@ -130,6 +133,7 @@ async def route(utterance: str, state: DialogState | None = None, *, model: str 
         ],
         language=out.language,
         response_language=out.response_language,
+        situation=out.situation,
         slots={s.name.value: s.value for s in out.slots},
         is_continuation=out.is_continuation,
         latency_ms=latency_ms,
