@@ -3,7 +3,6 @@ import {
   buildReply,
   decide,
   demoDecision,
-  RouteDecisionSchema,
   routeUtterance,
   type ClientDialogState,
   type RouteDecision,
@@ -14,6 +13,7 @@ import { loadCatalog } from "../../../lib/server/catalog";
 import { completeWithOpenAI, hasModelKey } from "../../../lib/server/completion";
 import { pool } from "../../../lib/server/db";
 import { recordTurn } from "../../../lib/server/journal";
+import { createServiceGate, routeViaService } from "../../../lib/server/router-service";
 
 /**
  * Один ход диалога: реплика -> выбор сценария -> политика -> ответ из данных набора -> трассировка.
@@ -22,7 +22,8 @@ import { recordTurn } from "../../../lib/server/journal";
  * ROUTER_URL — сервис выбора сценария (FastAPI, основной путь); OPENAI_API_KEY — LLM-маршрутизатор ядра;
  * без обоих — демо-режим для проверки без личных ключей (Положение §5.6.6).
  * Если сервис недоступен или ответил ошибкой, ход не обрывается: решение принимает резервный путь
- * (маршрутизатор ядра или демо-режим), причина сбоя сервиса попадает в трассировку.
+ * (маршрутизатор ядра или демо-режим), причина сбоя сервиса попадает в трассировку. Пауза в опросе
+ * сервиса — только когда он не отвечает (ADR-015).
  */
 export const dynamic = "force-dynamic";
 
@@ -42,25 +43,8 @@ const RequestSchema = z.object({
 /** Сколько реплик истории хранить в состоянии: достаточно для контекста, не раздувает промпт. */
 const HISTORY_LIMIT = 12;
 
-/**
- * После сбоя сервиса выбора сценария ходы на это время идут сразу резервным путём. Остановленный
- * контейнер не отвечает быстро: имя router в сети compose не разрешается ~5 с (EAI_AGAIN), и без паузы
- * каждый ход ждал бы эти секунды.
- */
-const SERVICE_RETRY_AFTER_MS = 30_000;
-let serviceDownUntil = 0;
-
-async function routeViaService(url: string, utterance: string, state: ClientDialogState): Promise<RouteDecision> {
-  const response = await fetch(`${url.replace(/\/$/, "")}/route`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ utterance, state }),
-    signal: AbortSignal.timeout(8000),
-  });
-  if (!response.ok) throw new Error(`router-service ${response.status}`);
-  // Ответ сервиса — такой же недоверенный ввод, как ответ модели: проверяем тем же контрактом.
-  return RouteDecisionSchema.parse(await response.json());
-}
+/** Не отвечающий сервис выбора сценария 30 с не опрашивается; ответ с HTTP-ошибкой паузу не включает (ADR-015). */
+const serviceGate = createServiceGate(30_000);
 
 export async function POST(request: Request): Promise<Response> {
   const started = Date.now();
@@ -78,15 +62,15 @@ export async function POST(request: Request): Promise<Response> {
   const routerStarted = Date.now();
   const serviceUrl = process.env.ROUTER_URL;
 
-  if (serviceUrl && Date.now() < serviceDownUntil) {
-    error = "router-service недоступен, повтор после паузы";
+  if (serviceUrl && serviceGate.isPaused()) {
+    error = "router-service не отвечает, повтор после паузы";
   } else if (serviceUrl) {
     source = "router-service";
     try {
       decision = await routeViaService(serviceUrl, utterance, state);
     } catch (e) {
       error = e instanceof Error ? e.message : String(e);
-      serviceDownUntil = Date.now() + SERVICE_RETRY_AFTER_MS;
+      serviceGate.recordFailure(e);
     }
   }
   if (!decision) {
