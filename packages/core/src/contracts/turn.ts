@@ -17,6 +17,8 @@ export interface DialogTurn {
 
 /** Состояние диалога, которое клиент хранит и отправляет с каждой репликой. */
 export interface ClientDialogState {
+  /** Выдаётся сервером на первом ходе; по нему ходы связываются в журнале для панели супервизора. */
+  dialogId?: string;
   language?: Language;
   activeScenario?: string;
   lowConfidenceStreak: number;

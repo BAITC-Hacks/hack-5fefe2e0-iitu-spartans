@@ -7,14 +7,15 @@ import { CatalogSchema, type Catalog, type Priority, type ScenarioLabels } from 
  * Каталог проверяется схемой: ошибка в данных должна остановить сервер при первом запросе, а не исказить промпт.
  */
 
-const DATA_DIR = process.env.DATA_DIR ?? path.resolve(process.cwd(), "../../data/kit");
+// Путь к данным читается во время работы сервера, а не при сборке: пометка turbopackIgnore исключает его из трассировки сборки.
+const DATA_DIR = process.env.DATA_DIR ?? path.resolve(/*turbopackIgnore: true*/ process.cwd(), "../../data/kit");
 
 /** Русские и казахские названия сценариев — из таблицы «Сценарии» README набора (в scenarios.json они на английском). */
 function labelsFromReadme(file: string): Record<string, string> {
   const labels: Record<string, string> = {};
   let text = "";
   try {
-    text = readFileSync(path.join(DATA_DIR, file), "utf8");
+    text = readFileSync(path.join(/*turbopackIgnore: true*/ DATA_DIR, file), "utf8");
   } catch {
     return labels;
   }
@@ -29,7 +30,7 @@ let cached: { catalog: Catalog; labels: ScenarioLabels; priorityOf: (id: string)
 
 export function loadCatalog() {
   if (cached) return cached;
-  const raw = JSON.parse(readFileSync(path.join(DATA_DIR, "scenarios.json"), "utf8"));
+  const raw = JSON.parse(readFileSync(path.join(/*turbopackIgnore: true*/ DATA_DIR, "scenarios.json"), "utf8"));
   const catalog = CatalogSchema.parse(raw);
   const priorities = new Map(catalog.scenarios.map((s) => [s.scenario_id, s.priority] as const));
   cached = {
