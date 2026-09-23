@@ -1,0 +1,47 @@
+{
+  "meta": { "dataset": "mini-kit — тестовая фикстура в формате slots.json стартового набора", "version": "test" },
+  "slots": [
+    {
+      "name": "phone",
+      "type": "string",
+      "description": "Client phone number",
+      "pattern": "^\\+7\\d{10}$",
+      "prompt": { "ru": "Подскажите, пожалуйста, ваш номер телефона.", "kk": "Телефон нөміріңізді айтып жіберіңізші." }
+    },
+    {
+      "name": "policy_number",
+      "type": "string",
+      "description": "Policy number",
+      "pattern": "^SQ-(OGPO|CASCO|DMS)-\\d{6}$",
+      "prompt": { "ru": "Назовите номер полиса.", "kk": "Полис нөмірін айтып жіберіңізші." }
+    },
+    {
+      "name": "claim_number",
+      "type": "string",
+      "description": "Claim number",
+      "pattern": "^CL-\\d{6}$",
+      "prompt": { "ru": "Назовите номер заявления.", "kk": "Өтініш нөмірін айтып жіберіңізші." }
+    },
+    {
+      "name": "region",
+      "type": "enum",
+      "description": "Vehicle registration region for OGPO pricing",
+      "values": ["almaty", "other"],
+      "prompt": { "ru": "В каком городе зарегистрирована машина?", "kk": "Көлік қай қалада тіркелген?" }
+    },
+    {
+      "name": "product_type",
+      "type": "enum",
+      "description": "Insurance product",
+      "values": ["ogpo", "casco", "dms", "travel"],
+      "prompt": { "ru": "О какой страховке идёт речь?", "kk": "Қай сақтандыру туралы сөйлесіп тұрмыз?" }
+    },
+    {
+      "name": "franchise",
+      "type": "enum",
+      "description": "CASCO deductible, KZT",
+      "values": [0, 50000],
+      "prompt": { "ru": "Франшизу рассмотрите?", "kk": "Франшиза қарастырасыз ба?" }
+    }
+  ]
+}
