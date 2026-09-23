@@ -10,7 +10,7 @@ import {
   type TurnTrace,
 } from "@voice-router/core";
 import { loadCatalog } from "../../../lib/server/catalog";
-import { completeWithOpenAI, hasModelKey } from "../../../lib/server/completion";
+import { completeWithOpenAI, routerProvider } from "../../../lib/server/completion";
 import { pool } from "../../../lib/server/db";
 import { recordTurn } from "../../../lib/server/journal";
 import { createServiceGate, routeViaService } from "../../../lib/server/router-service";
@@ -74,7 +74,7 @@ export async function POST(request: Request): Promise<Response> {
     }
   }
   if (!decision) {
-    if (hasModelKey()) {
+    if (routerProvider()) {
       source = "core-llm";
       const context = {
         history: state.history,
