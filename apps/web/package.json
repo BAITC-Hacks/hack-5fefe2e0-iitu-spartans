@@ -9,6 +9,7 @@
     "start": "next start --port 3000"
   },
   "dependencies": {
+    "@google/genai": "^2.24.0",
     "@voice-router/core": "workspace:*",
     "next": "16.3.5",
     "pg": "8.23.0",
