@@ -7,6 +7,8 @@ import { AppHeader } from "./AppHeader";
 import { Composer } from "./Composer";
 import { MessageList } from "./MessageList";
 import { StatusLine } from "./StatusLine";
+import { TracePanel } from "./TracePanel";
+import { TurnHistory } from "./TurnHistory";
 import { postTurn, type TurnFailure } from "./turn-client";
 import type { ChatMessage, VoiceStatus } from "./types";
 
@@ -32,6 +34,8 @@ export function VoiceRouterApp() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [traces, setTraces] = useState<TurnTrace[]>([]);
   const [pending, setPending] = useState(false);
+  // null — панель следит за последним ходом; число — супервизор открыл прошлый ход из истории.
+  const [selectedTurn, setSelectedTurn] = useState<number | null>(null);
 
   const nextId = useRef(1);
   // Ref, а не state: голосовой колбэк может прийти раньше перерисовки, и второй запрос не должен уйти.
@@ -55,6 +59,7 @@ export function VoiceRouterApp() {
         const { reply, trace, state } = result.data;
         setDialogState(state);
         setTraces((current) => [...current, trace]);
+        setSelectedTurn(null);
         pushMessage({ id: nextId.current++, role: "bot", text: reply.text });
       } else {
         pushMessage(failureMessage(nextId.current++, result.failure));
@@ -69,9 +74,12 @@ export function VoiceRouterApp() {
     setDialogState(INITIAL_CLIENT_STATE);
     setMessages([]);
     setTraces([]);
+    setSelectedTurn(null);
   }, []);
 
   const status: VoiceStatus = pending ? "thinking" : "idle";
+  const shownIndex = selectedTurn ?? traces.length - 1;
+  const shownTrace = traces[shownIndex];
 
   return (
     <>
@@ -99,8 +107,13 @@ export function VoiceRouterApp() {
             <h2 id="trace-title" className="card__title">
               {t("trace.title")}
             </h2>
+            {shownTrace ? <span className="badge badge--turn">{t("trace.turn", { n: shownTrace.turn })}</span> : null}
           </div>
-          <p className="muted">{traces.length === 0 ? t("trace.empty") : t("trace.turn", { n: traces.length })}</p>
+          {shownTrace ? <TracePanel trace={shownTrace} /> : <p className="muted">{t("trace.empty")}</p>}
+          <section className="section">
+            <h3 className="section__title">{t("history.title")}</h3>
+            <TurnHistory traces={traces} selected={shownIndex} onSelect={setSelectedTurn} />
+          </section>
         </aside>
       </main>
     </>

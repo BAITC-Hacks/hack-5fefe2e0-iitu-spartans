@@ -718,3 +718,14 @@ select {
   font-size: 13px;
   font-weight: 700;
 }
+
+.badge--turn {
+  background: var(--color-gray);
+  color: var(--color-ink);
+}
+
+.scenario-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
